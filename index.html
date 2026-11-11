@@ -4,243 +4,629 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Jupiter — Student Hub</title>
-  <style>
-    :root {
-      --bg-black: #000000;
-      --text-white: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.6);
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: 1px solid rgba(255, 255, 255, 0.12);
-      --glass-blur: blur(20px) saturate(180%);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            oled: '#000000',
+            glass: 'rgba(255, 255, 255, 0.05)',
+            glassHover: 'rgba(255, 255, 255, 0.10)',
+            glassBorder: 'rgba(255, 255, 255, 0.14)',
+          }
+        }
+      }
     }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-black);
-      color: var(--text-white);
-      padding: 24px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    .glass-drawer {
+      background: rgba(12, 12, 12, 0.82);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .glass-input {
+      background: rgba(18, 18, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .glass-input:focus {
+      border-color: rgba(255, 255, 255, 0.4);
+      outline: none;
+    }
+
+    /* Circular Liquid Glass Menu Button */
+    .glass-circle-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       display: flex;
+      align-items: center;
       justify-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
-    .container { width: 100%; max-width: 480px; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
-    .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: var(--glass-border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: var(--glass-shadow);
-      margin-bottom: 16px;
+
+    .glass-circle-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.03);
     }
-    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
-    select {
-      width: 100%; padding: 14px 16px; border-radius: 12px; border: var(--glass-border);
-      background: #111827; color: var(--text-white); font-size: 1rem; outline: none; cursor: pointer; margin-bottom: 16px; box-sizing: border-box;
+
+    .glass-circle-btn:active {
+      transform: scale(0.96);
     }
-    .primary-btn {
-      width: 100%; padding: 14px; background: #ffffff; color: #000000; border: none;
-      border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+
+    /* Smooth Drawer Animations */
+    .drawer-overlay {
+      transition: opacity 0.3s ease-out;
     }
-    .switch-btn { background: transparent; border: var(--glass-border); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
-    .day-toggle { display: flex; gap: 8px; }
-    .day-btn {
-      flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
-      border-radius: 10px; color: var(--text-muted); font-weight: 600; cursor: pointer;
+
+    .drawer-content {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .day-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
-    .schedule-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; border-bottom: var(--glass-border); padding-bottom: 12px; }
-    .schedule-header h2 { font-size: 1.25rem; margin: 0; font-weight: 500; }
-    .period-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-    .period-row:last-child { border-bottom: none; }
-    .period-time { font-size: 0.8rem; color: var(--text-muted); }
-    .period-subject { font-weight: 500; font-size: 1.05rem; margin-top: 2px; }
-    .period-meta { font-size: 0.85rem; color: var(--text-muted); text-align: right; }
-    .room-badge { background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 500; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
   </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-start p-4 md:p-8">
 
-<div class="container">
-  <header>
-    <h1>Jupiter</h1>
-    <button id="switchBtn" class="switch-btn" onclick="showOnboarding()" style="display: none;">Switch Profile</button>
-  </header>
+  <!-- OVERLAY BACKDROP FOR MENU -->
+  <div id="drawerOverlay" onclick="closeMenu()" class="drawer-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-40 opacity-0 pointer-events-none"></div>
 
-  <!-- Onboarding Screen -->
-  <div id="onboardingCard" class="glass-card">
-    <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Welcome to Jupiter</h2>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Select your name to load your schedule.</p>
-    <label for="studentSelect">Who are you?</label>
-    <select id="studentSelect">
-      <option value="christos">Christos</option>
-      <option value="christopher">Christopher</option>
-      <option value="imraan">Imraan</option>
-      <option value="mahrus">Mahrus</option>
-      <option value="caleb">Caleb</option>
-    </select>
-    <button class="primary-btn" onclick="saveProfileAndStart()">Get Started</button>
-  </div>
-
-  <!-- Schedule Screen -->
-  <div id="scheduleApp" style="display: none;">
-    <div class="glass-card" style="padding: 16px 24px;">
-      <label style="margin-bottom: 8px;">Rotation Day (Auto-detected)</label>
-      <div class="day-toggle">
-        <button id="btnDay1" class="day-btn" onclick="setDay(1)">Day 1</button>
-        <button id="btnDay2" class="day-btn" onclick="setDay(2)">Day 2</button>
+  <!-- SLIDE-OUT LIQUID GLASS DRAWER MENU -->
+  <aside id="drawerContent" class="drawer-content fixed top-0 left-0 h-full w-72 glass-drawer z-50 -translate-x-full p-6 flex flex-col justify-between">
+    <div class="space-y-6">
+      <!-- Drawer Top Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center bg-white/10">
+            <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+          </div>
+          <span class="text-lg font-bold tracking-tight text-white">Jupiter</span>
+        </div>
+        <button onclick="closeMenu()" class="p-2 text-white/50 hover:text-white rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
-    </div>
-    <div class="glass-card">
-      <div class="schedule-header">
-        <h2 id="displayName">Schedule</h2>
-        <span class="period-time" id="dayIndicator">Day 1</span>
-      </div>
-      <div id="scheduleContainer"></div>
-    </div>
-  </div>
-</div>
 
-<script>
-  let currentDay = 1;
-  let activeUser = localStorage.getItem('jupiter_user_profile');
-
-  const masterSchedules = {
-    "christos": {
-      name: "Christos",
-      baseSchedule: [
-        { period: 1, time: "9:00 AM - 10:20 AM", title: "Science", room: "318", teacher: "Ding, Xiao Yue" },
-        { period: 2, time: "10:25 AM - 11:40 AM", title: "Exploring Canadian Geography", room: "214", teacher: "Domingues, Lucia" },
-        { period: 3, time: "12:40 PM - 1:55 PM", title: "Mathematics", room: "307", teacher: "Scharlach, Alf" },
-        { period: 4, time: "2:00 PM - 3:15 PM", title: "Dramatic Arts", room: "200", teacher: "Ugarkovic, Sonya" }
-      ]
-    },
-    "christopher": {
-      name: "Christopher",
-      baseSchedule: [
-        { period: 1, time: "9:00 AM - 10:20 AM", title: "Class 1", room: "101", teacher: "Staff" },
-        { period: 2, time: "10:25 AM - 11:40 AM", title: "Class 2", room: "102", teacher: "Staff" },
-        { period: 3, time: "12:40 PM - 1:55 PM", title: "Class 3", room: "103", teacher: "Staff" },
-        { period: 4, time: "2:00 PM - 3:15 PM", title: "Class 4", room: "104", teacher: "Staff" }
-      ]
-    },
-    "imraan": {
-      name: "Imraan",
-      baseSchedule: [
-        { period: 1, time: "9:00 AM - 10:20 AM", title: "Class 1", room: "201", teacher: "Staff" },
-        { period: 2, time: "10:25 AM - 11:40 AM", title: "Class 2", room: "202", teacher: "Staff" },
-        { period: 3, time: "12:40 PM - 1:55 PM", title: "Class 3", room: "203", teacher: "Staff" },
-        { period: 4, time: "2:00 PM - 3:15 PM", title: "Class 4", room: "204", teacher: "Staff" }
-      ]
-    },
-    "mahrus": {
-      name: "Mahrus",
-      baseSchedule: [
-        { period: 1, time: "9:00 AM - 10:20 AM", title: "Class 1", room: "301", teacher: "Staff" },
-        { period: 2, time: "10:25 AM - 11:40 AM", title: "Class 2", room: "302", teacher: "Staff" },
-        { period: 3, time: "12:40 PM - 1:55 PM", title: "Class 3", room: "303", teacher: "Staff" },
-        { period: 4, time: "2:00 PM - 3:15 PM", title: "Class 4", room: "304", teacher: "Staff" }
-      ]
-    },
-    "caleb": {
-      name: "Caleb",
-      baseSchedule: [
-        { period: 1, time: "9:00 AM - 10:20 AM", title: "Class 1", room: "401", teacher: "Staff" },
-        { period: 2, time: "10:25 AM - 11:40 AM", title: "Class 2", room: "402", teacher: "Staff" },
-        { period: 3, time: "12:40 PM - 1:55 PM", title: "Class 3", room: "403", teacher: "Staff" },
-        { period: 4, time: "2:00 PM - 3:15 PM", title: "Class 4", room: "404", teacher: "Staff" }
-      ]
-    }
-  };
-
-  function autoDetectDay() {
-    const today = new Date();
-    const dayOfMonth = today.getDate();
-    return (dayOfMonth % 2 !== 0) ? 1 : 2;
-  }
-
-  function init() {
-    currentDay = autoDetectDay();
-    if (activeUser && masterSchedules[activeUser]) {
-      showSchedule();
-    } else {
-      showOnboarding();
-    }
-  }
-
-  function showOnboarding() {
-    document.getElementById('onboardingCard').style.display = 'block';
-    document.getElementById('scheduleApp').style.display = 'none';
-    document.getElementById('switchBtn').style.display = 'none';
-  }
-
-  function saveProfileAndStart() {
-    const selectEl = document.getElementById('studentSelect');
-    activeUser = selectEl.value;
-    localStorage.setItem('jupiter_user_profile', activeUser);
-    showSchedule();
-  }
-
-  function showSchedule() {
-    document.getElementById('onboardingCard').style.display = 'none';
-    document.getElementById('scheduleApp').style.display = 'block';
-    document.getElementById('switchBtn').style.display = 'block';
-    document.getElementById('btnDay1').classList.toggle('active', currentDay === 1);
-    document.getElementById('btnDay2').classList.toggle('active', currentDay === 2);
-    document.getElementById('dayIndicator').textContent = `Day ${currentDay}`;
-    renderSchedule();
-  }
-
-  function setDay(day) {
-    currentDay = day;
-    document.getElementById('btnDay1').classList.toggle('active', day === 1);
-    document.getElementById('btnDay2').classList.toggle('active', day === 2);
-    document.getElementById('dayIndicator').textContent = `Day ${currentDay}`;
-    renderSchedule();
-  }
-
-  function renderSchedule() {
-    const student = masterSchedules[activeUser];
-    if (!student) return;
-    document.getElementById('displayName').textContent = `${student.name}'s Schedule`;
-    const container = document.getElementById('scheduleContainer');
-    container.innerHTML = '';
-
-    const base = student.baseSchedule;
-    let activeSchedule = (currentDay === 1) ? [
-      { slot: "Period 1", time: base[0].time, data: base[0] },
-      { slot: "Period 2", time: base[1].time, data: base[1] },
-      { slot: "Period 3", time: base[2].time, data: base[2] },
-      { slot: "Period 4", time: base[3].time, data: base[3] }
-    ] : [
-      { slot: "Period 1", time: base[0].time, data: base[1] },
-      { slot: "Period 2", time: base[1].time, data: base[0] },
-      { slot: "Period 3", time: base[2].time, data: base[3] },
-      { slot: "Period 4", time: base[3].time, data: base[2] }
-    ];
-
-    activeSchedule.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'period-row';
-      row.innerHTML = `
+      <!-- User Active Profile Badge -->
+      <div id="drawerUserBadge" class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
         <div>
-          <div class="period-time">${item.slot} • ${item.time}</div>
-          <div class="period-subject">${item.data.title}</div>
+          <div class="text-[10px] font-semibold text-white/40 uppercase tracking-wider">Active Profile</div>
+          <div id="drawerUserName" class="text-sm font-medium text-white mt-0.5">Not set</div>
         </div>
-        <div class="period-meta">
-          <span class="room-badge">Rm ${item.data.room}</span>
-          <div style="margin-top: 4px; font-size: 0.75rem;">${item.data.teacher}</div>
-        </div>
-      `;
-      container.appendChild(row);
-    });
-  }
+        <button onclick="showOnboarding(); closeMenu();" class="text-xs text-white/60 hover:text-white underline font-medium">Change</button>
+      </div>
 
-  window.onload = init;
-</script>
+      <!-- Navigation Menu Items -->
+      <nav class="space-y-2">
+        <button onclick="switchView('schedule'); closeMenu();" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-all text-left">
+          <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          My Schedule
+        </button>
+
+        <button onclick="switchView('compare'); closeMenu();" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-all text-left">
+          <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Compare Schedules
+        </button>
+
+        <button onclick="showOnboarding(); closeMenu();" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-all text-left">
+          <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Switch Profile
+        </button>
+      </nav>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="pt-4 border-t border-white/10 text-center">
+      <div class="text-[11px] text-white/40">Jupiter Hub v2.5</div>
+    </div>
+  </aside>
+
+  <!-- MAIN APP WRAPPER -->
+  <div class="w-full max-w-4xl">
+
+    <!-- TOP BAR HEADER -->
+    <header class="flex items-center justify-between mb-6 glass-panel rounded-2xl px-5 py-3.5">
+      <div class="flex items-center gap-3">
+        <!-- CIRCULAR HAMBURGER BUTTON (Matching image layout with 2 lines) -->
+        <button onclick="openMenu()" class="glass-circle-btn" aria-label="Open Menu">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 9h16M4 15h16"/>
+          </svg>
+        </button>
+
+        <span class="text-xl font-bold tracking-tight text-white leading-none">Jupiter</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span id="headerDayBadge" class="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider bg-white/10 text-white border border-white/20">
+          DAY 1
+        </span>
+      </div>
+    </header>
+
+    <!-- ONBOARDING VIEW -->
+    <main id="onboardingCard" class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md mx-auto my-12" style="display: none;">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 mx-auto mb-3 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-semibold tracking-tight text-white">Welcome to Jupiter</h2>
+        <p class="text-sm text-white/60 mt-1">Select your profile to view your schedule.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="studentSelect" class="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
+            Select Your Name
+          </label>
+          <select id="studentSelect" class="glass-input w-full p-3.5 rounded-xl text-base cursor-pointer">
+            <!-- Options populated via JS -->
+          </select>
+        </div>
+
+        <button onclick="saveProfileAndStart()" class="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-base transition-opacity duration-200 hover:opacity-90 active:scale-[0.99]">
+          Get Started
+        </button>
+      </div>
+    </main>
+
+    <!-- SCHEDULE VIEW -->
+    <main id="scheduleApp" class="space-y-4" style="display: none;">
+      <!-- Rotation Control -->
+      <section class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-white/50">Rotation Mode</div>
+          <div class="text-sm font-medium text-white/90 mt-0.5">Auto-detected from today's date</div>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button id="btnDay1" onclick="setDay(1)" class="flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold tracking-wide transition-all duration-200">
+            Day 1 (Odd)
+          </button>
+          <button id="btnDay2" onclick="setDay(2)" class="flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold tracking-wide transition-all duration-200">
+            Day 2 (Even)
+          </button>
+        </div>
+      </section>
+
+      <!-- Main Schedule List Card -->
+      <section class="glass-panel rounded-3xl p-6">
+        <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-2">
+          <div>
+            <h2 id="displayName" class="text-xl font-semibold text-white tracking-tight"></h2>
+            <p id="dateSubtext" class="text-xs text-white/50 mt-0.5"></p>
+          </div>
+        </div>
+
+        <!-- Period Container (No S1/S2 badges) -->
+        <div id="scheduleContainer" class="divide-y divide-white/5">
+          <!-- Dynamically populated periods -->
+        </div>
+      </section>
+    </main>
+
+    <!-- COMPARE SCHEDULES VIEW -->
+    <main id="compareApp" class="space-y-4" style="display: none;">
+      <section class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-white">Compare Schedules</h2>
+          <p class="text-xs text-white/50">Select two students to compare their timetables side-by-side.</p>
+        </div>
+
+        <!-- Toggle Day in Compare View -->
+        <div class="flex items-center gap-2">
+          <button id="compBtnDay1" onclick="setDay(1)" class="px-4 py-1.5 rounded-xl border text-xs font-semibold transition-all">
+            Day 1
+          </button>
+          <button id="compBtnDay2" onclick="setDay(2)" class="px-4 py-1.5 rounded-xl border text-xs font-semibold transition-all">
+            Day 2
+          </button>
+        </div>
+      </section>
+
+      <!-- Dual Dropdown Selectors -->
+      <section class="glass-panel rounded-2xl p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-white/50 mb-1.5">Student 1</label>
+            <select id="compareStudent1" onchange="renderCompareView()" class="glass-input w-full p-3 rounded-xl text-sm font-medium cursor-pointer"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-white/50 mb-1.5">Student 2</label>
+            <select id="compareStudent2" onchange="renderCompareView()" class="glass-input w-full p-3 rounded-xl text-sm font-medium cursor-pointer"></select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Side-by-Side Comparison Container -->
+      <section class="glass-panel rounded-3xl p-6">
+        <div id="compareContainer" class="space-y-6">
+          <!-- Dynamically generated period comparative cards -->
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    // State Variables
+    let currentDay = 1;
+    let activeUser = localStorage.getItem('jupiter_user_profile') || null;
+    let currentView = 'schedule';
+
+    // Master Student Timetable Database
+    const masterSchedules = {
+      "christos": {
+        name: "Christos",
+        baseSchedule: [
+          { period: 1, time: "9:00 AM - 10:20 AM", title: "Science", room: "318", teacher: "Xiao Yue Ding" },
+          { period: 2, time: "10:25 AM - 11:40 AM", title: "Geography", room: "214", teacher: "Lucia Domingues" },
+          { period: 3, time: "12:40 PM - 1:55 PM", title: "Math", room: "307", teacher: "Alf Scharlach" },
+          { period: 4, time: "2:00 PM - 3:15 PM", title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }
+        ]
+      },
+      "stella": {
+        name: "Stella",
+        baseSchedule: [
+          { period: 1, time: "9:00 AM - 10:20 AM", title: "Geography", room: "117A", teacher: "Robert Cooper" },
+          { period: 2, time: "10:25 AM - 11:40 AM", title: "Math", room: "227", teacher: "Ravi Singh" },
+          { period: 3, time: "12:40 PM - 1:55 PM", title: "English", room: "100", teacher: "Paul Savaria" },
+          { period: 4, time: "2:00 PM - 3:15 PM", title: "French", room: "114", teacher: "Leah Raghunath" }
+        ]
+      },
+      "imraan": {
+        name: "Imraan",
+        baseSchedule: [
+          { period: 1, time: "9:00 AM - 10:20 AM", title: "Computer Tech", room: "119", teacher: "Wei Qin" },
+          { period: 2, time: "10:25 AM - 11:40 AM", title: "Geography", room: "214", teacher: "Lucia Domingues" },
+          { period: 3, time: "12:40 PM - 1:55 PM", title: "English", room: "311", teacher: "Sylvia Kirkley" },
+          { period: 4, time: "2:00 PM - 3:15 PM", title: "French", room: "114", teacher: "Leah Raghunath" }
+        ]
+      },
+      "caleb": {
+        name: "Caleb",
+        baseSchedule: [
+          { period: 1, time: "9:00 AM - 10:20 AM", title: "Computer Tech", room: "119", teacher: "Wei Qin" },
+          { period: 2, time: "10:25 AM - 11:40 AM", title: "English", room: "308", teacher: "Millee Zhou" },
+          { period: 3, time: "12:40 PM - 1:55 PM", title: "Math", room: "307", teacher: "Alf Scharlach" },
+          { period: 4, time: "2:00 PM - 3:15 PM", title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }
+        ]
+      },
+      "mahrus": {
+        name: "Mahrus",
+        baseSchedule: [
+          { period: 1, time: "9:00 AM - 10:20 AM", title: "French", room: "101", teacher: "Chris Ujimoto" },
+          { period: 2, time: "10:25 AM - 11:40 AM", title: "Geography", room: "214", teacher: "Lucia Domingues" },
+          { period: 3, time: "12:40 PM - 1:55 PM", title: "Science", room: "320", teacher: "Ryan Marrast" },
+          { period: 4, time: "2:00 PM - 3:15 PM", title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }
+        ]
+      }
+    };
+
+    // Auto-detect Day 1 vs Day 2 (Odd date = Day 1, Even date = Day 2)
+    function autoDetectDay() {
+      const today = new Date();
+      return (today.getDate() % 2 !== 0) ? 1 : 2;
+    }
+
+    function getFormattedDate() {
+      const today = new Date();
+      return today.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Rotates period schedule based on Day 1 vs Day 2 (1<->2 and 3<->4 swap on Day 2)
+    function getRotatedSchedule(studentKey, day) {
+      const base = masterSchedules[studentKey].baseSchedule;
+      const times = [
+        "9:00 AM - 10:20 AM",
+        "10:25 AM - 11:40 AM",
+        "12:40 PM - 1:55 PM",
+        "2:00 PM - 3:15 PM"
+      ];
+
+      if (day === 1) {
+        return [
+          { slot: "Period 1", time: times[0], data: base[0] },
+          { slot: "Period 2", time: times[1], data: base[1] },
+          { slot: "Period 3", time: times[2], data: base[2] },
+          { slot: "Period 4", time: times[3], data: base[3] }
+        ];
+      } else {
+        return [
+          { slot: "Period 1", time: times[0], data: base[1] },
+          { slot: "Period 2", time: times[1], data: base[0] },
+          { slot: "Period 3", time: times[2], data: base[3] },
+          { slot: "Period 4", time: times[3], data: base[2] }
+        ];
+      }
+    }
+
+    // App Initialization
+    function init() {
+      populateStudentDropdowns();
+      currentDay = autoDetectDay();
+
+      if (activeUser && masterSchedules[activeUser]) {
+        switchView('schedule');
+      } else {
+        showOnboarding();
+      }
+    }
+
+    function populateStudentDropdowns() {
+      const keys = Object.keys(masterSchedules);
+      const studentSelect = document.getElementById('studentSelect');
+      const c1 = document.getElementById('compareStudent1');
+      const c2 = document.getElementById('compareStudent2');
+
+      studentSelect.innerHTML = '';
+      c1.innerHTML = '';
+      c2.innerHTML = '';
+
+      keys.forEach((key, idx) => {
+        const name = masterSchedules[key].name;
+
+        // Onboarding Dropdown
+        const opt1 = document.createElement('option');
+        opt1.value = key;
+        opt1.textContent = name;
+        studentSelect.appendChild(opt1);
+
+        // Compare Selectors
+        const optC1 = document.createElement('option');
+        optC1.value = key;
+        optC1.textContent = name;
+        c1.appendChild(optC1);
+
+        const optC2 = document.createElement('option');
+        optC2.value = key;
+        optC2.textContent = name;
+        c2.appendChild(optC2);
+      });
+
+      // Default Compare defaults (Christos vs Stella)
+      if (keys.length > 1) {
+        c1.value = keys[0];
+        c2.value = keys[1];
+      }
+    }
+
+    // Menu Drawer Logic
+    function openMenu() {
+      document.getElementById('drawerOverlay').classList.remove('opacity-0', 'pointer-events-none');
+      document.getElementById('drawerContent').classList.remove('-translate-x-full');
+    }
+
+    function closeMenu() {
+      document.getElementById('drawerOverlay').classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('drawerContent').classList.add('-translate-x-full');
+    }
+
+    // View Switching Logic
+    function switchView(view) {
+      currentView = view;
+      document.getElementById('onboardingCard').style.display = 'none';
+
+      // Update Menu active name badge
+      if (activeUser && masterSchedules[activeUser]) {
+        document.getElementById('drawerUserName').textContent = masterSchedules[activeUser].name;
+      }
+
+      if (view === 'schedule') {
+        document.getElementById('scheduleApp').style.display = 'block';
+        document.getElementById('compareApp').style.display = 'none';
+        renderSchedule();
+      } else {
+        document.getElementById('scheduleApp').style.display = 'none';
+        document.getElementById('compareApp').style.display = 'block';
+        renderCompareView();
+      }
+    }
+
+    function showOnboarding() {
+      document.getElementById('onboardingCard').style.display = 'block';
+      document.getElementById('scheduleApp').style.display = 'none';
+      document.getElementById('compareApp').style.display = 'none';
+    }
+
+    function saveProfileAndStart() {
+      const selected = document.getElementById('studentSelect').value;
+      if (!selected) return;
+      activeUser = selected;
+      localStorage.setItem('jupiter_user_profile', activeUser);
+      switchView('schedule');
+    }
+
+    function setDay(day) {
+      currentDay = day;
+      if (currentView === 'schedule') {
+        renderSchedule();
+      } else {
+        renderCompareView();
+      }
+    }
+
+    // Render Home Schedule (No S1/S2 badges)
+    function renderSchedule() {
+      if (!activeUser || !masterSchedules[activeUser]) return;
+
+      const student = masterSchedules[activeUser];
+      document.getElementById('displayName').textContent = `${student.name}'s Schedule`;
+      document.getElementById('dateSubtext').textContent = getFormattedDate();
+      document.getElementById('headerDayBadge').textContent = `DAY ${currentDay}`;
+
+      // Day Toggle Styles
+      const b1 = document.getElementById('btnDay1');
+      const b2 = document.getElementById('btnDay2');
+      if (currentDay === 1) {
+        b1.className = 'flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold bg-white text-black border-white';
+        b2.className = 'flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold bg-white/5 text-white/60 border-white/10 hover:bg-white/10';
+      } else {
+        b2.className = 'flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold bg-white text-black border-white';
+        b1.className = 'flex-1 sm:flex-none px-5 py-2 rounded-xl border text-xs font-semibold bg-white/5 text-white/60 border-white/10 hover:bg-white/10';
+      }
+
+      const container = document.getElementById('scheduleContainer');
+      container.innerHTML = '';
+
+      const rotated = getRotatedSchedule(activeUser, currentDay);
+
+      rotated.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'py-4 flex items-center justify-between transition-colors hover:bg-white/[0.02] px-2 rounded-xl';
+        row.innerHTML = `
+          <div class="space-y-0.5">
+            <div class="text-xs font-medium text-white/40 tracking-wide">${item.slot} • ${item.time}</div>
+            <div class="text-base font-medium text-white tracking-tight">${item.data.title}</div>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/10 text-white border border-white/15">
+              Rm ${item.data.room}
+            </span>
+            <div class="text-xs text-white/50 mt-1">${item.data.teacher}</div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // Render Compare View
+    function renderCompareView() {
+      document.getElementById('headerDayBadge').textContent = `DAY ${currentDay}`;
+
+      const cb1 = document.getElementById('compBtnDay1');
+      const cb2 = document.getElementById('compBtnDay2');
+      if (currentDay === 1) {
+        cb1.className = 'px-4 py-1.5 rounded-xl border text-xs font-semibold bg-white text-black border-white';
+        cb2.className = 'px-4 py-1.5 rounded-xl border text-xs font-semibold bg-white/5 text-white/60 border-white/10 hover:bg-white/10';
+      } else {
+        cb2.className = 'px-4 py-1.5 rounded-xl border text-xs font-semibold bg-white text-black border-white';
+        cb1.className = 'px-4 py-1.5 rounded-xl border text-xs font-semibold bg-white/5 text-white/60 border-white/10 hover:bg-white/10';
+      }
+
+      const key1 = document.getElementById('compareStudent1').value;
+      const key2 = document.getElementById('compareStudent2').value;
+
+      const container = document.getElementById('compareContainer');
+      container.innerHTML = '';
+
+      if (!key1 || !key2) return;
+
+      const sched1 = getRotatedSchedule(key1, currentDay);
+      const sched2 = getRotatedSchedule(key2, currentDay);
+
+      const name1 = masterSchedules[key1].name;
+      const name2 = masterSchedules[key2].name;
+
+      for (let i = 0; i < 4; i++) {
+        const item1 = sched1[i].data;
+        const item2 = sched2[i].data;
+        const slot = sched1[i].slot;
+        const time = sched1[i].time;
+
+        const isSameClass = (item1.title === item2.title && item1.room === item2.room);
+        const isSameSubject = (item1.title === item2.title);
+
+        let matchBadge = '';
+        if (isSameClass) {
+          matchBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-black">SAME CLASS</span>`;
+        } else if (isSameSubject) {
+          matchBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-white/10 text-white/80 border border-white/20">SAME SUBJECT</span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl border transition-all ${isSameClass ? 'border-white bg-white/10' : 'border-white/10 bg-white/[0.02]'}`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+            <span class="text-xs font-semibold text-white/50 tracking-wider uppercase">${slot} (${time})</span>
+            ${matchBadge}
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Student 1 -->
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-xs font-bold text-white/40 uppercase mb-1">${name1}</div>
+              <div class="text-sm font-medium text-white">${item1.title}</div>
+              <div class="flex items-center justify-between text-xs text-white/50 mt-2">
+                <span>Rm ${item1.room}</span>
+                <span>${item1.teacher}</span>
+              </div>
+            </div>
+
+            <!-- Student 2 -->
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-xs font-bold text-white/40 uppercase mb-1">${name2}</div>
+              <div class="text-sm font-medium text-white">${item2.title}</div>
+              <div class="flex items-center justify-between text-xs text-white/50 mt-2">
+                <span>Rm ${item2.room}</span>
+                <span>${item2.teacher}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
-<link rel="icon" type="image/png" href="./liquid-glass-logo-1x1-2160x2160-0.90s.png">
