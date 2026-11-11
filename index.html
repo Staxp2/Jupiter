@@ -81,7 +81,7 @@
       transition: background 0.2s;
     }
     .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
-    .sidebar-icon { font-size: 1.1rem; }
+    .sidebar-icon { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
     .glass-card {
       background: var(--glass-bg);
@@ -106,6 +106,7 @@
     .day-btn {
       flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
       border-radius: 10px; color: var(--text-muted); font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease;
     }
     .day-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
     .schedule-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; border-bottom: var(--glass-border); padding-bottom: 12px; }
@@ -116,19 +117,34 @@
     .period-subject { font-weight: 500; font-size: 1.05rem; margin-top: 2px; }
     .period-meta { font-size: 0.85rem; color: var(--text-muted); text-align: right; }
     .room-badge { background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 500; }
+    .assembly-badge { background: rgba(255, 255, 255, 0.2); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
 
-    /* Comparator Checkbox Styles */
-    .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-    .checkbox-label {
-      background: rgba(255, 255, 255, 0.03); border: var(--glass-border);
-      padding: 10px 14px; border-radius: 10px; display: flex; align-items: center; gap: 10px;
-      font-size: 0.9rem; cursor: pointer; user-select: none;
+    /* Lit-up Student Selection Cards */
+    .student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .student-card {
+      background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
+      padding: 12px 14px; border-radius: 12px; color: var(--text-muted);
+      font-size: 0.95rem; font-weight: 500; text-align: center; cursor: pointer;
+      transition: all 0.2s ease; user-select: none;
     }
-    .checkbox-label input { accent-color: #ffffff; width: 16px; height: 16px; cursor: pointer; }
+    .student-card:hover { background: rgba(255, 255, 255, 0.08); }
+    .student-card.active {
+      background: #ffffff; color: #000000; border-color: #ffffff; font-weight: 600;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Comparator & Match Indicators */
     .compare-grid { display: flex; flex-direction: column; gap: 16px; }
     .compare-period-card { background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 14px; padding: 14px; }
-    .compare-student-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9rem; }
+    .compare-period-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .compare-student-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9rem; border-radius: 6px; }
     .compare-student-row:last-child { border-bottom: none; }
+    .match-row { background: rgba(255, 255, 255, 0.08); }
+    .match-pill {
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      background: #ffffff; color: #000000; padding: 2px 8px; border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -138,13 +154,16 @@
 <div class="sidebar" id="sidebar">
   <h3>Menu</h3>
   <button class="sidebar-item" onclick="switchView('schedule')">
-    <span class="sidebar-icon">📅</span> My Schedule
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+    My Schedule
   </button>
   <button class="sidebar-item" onclick="switchView('compare')">
-    <span class="sidebar-icon">👥</span> Compare Schedules
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    Compare Schedules
   </button>
   <button class="sidebar-item" onclick="showOnboarding()">
-    <span class="sidebar-icon">🔄</span> Switch Profile
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+    Switch Profile
   </button>
 </div>
 
@@ -172,6 +191,7 @@
 
 <script>
   let currentDay = 1;
+  let isAssemblyDay = false;
   let activeUser = localStorage.getItem('jupiter_user_profile');
   let currentView = 'schedule';
   let compareSemester = 's1';
@@ -181,76 +201,104 @@
     "aaliyah": {
       name: "Aaliyah",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
+        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
+        { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
       ]
     },
     "caleb": {
       name: "Caleb",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Xiao Yue Ding" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
+        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
+        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Xiao Yue Ding" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
       ]
     },
     "christos": {
       name: "Christos",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
+        { s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
       ]
     },
     "imraan": {
       name: "Imraan",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }
+        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }
       ]
     },
     "leah": {
       name: "Leah",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
+        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } },
+        { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
       ]
     },
     "mahrus": {
       name: "Mahrus",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
+        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
       ]
     },
     "marwa": {
       name: "Marwa",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
+        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
+        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
+        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
       ]
     },
     "stella": {
       name: "Stella",
       baseSchedule: [
-        { time: "9:00 AM - 10:20 AM", s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } },
-        { time: "10:25 AM - 11:40 AM", s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
-        { time: "12:40 PM - 1:55 PM", s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } },
-        { time: "2:00 PM - 3:15 PM", s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }
+        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } },
+        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
+        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }
       ]
     }
   };
+
+  const regularTimes = [
+    { slot: "Period 1", time: "9:00 AM - 10:20 AM" },
+    { slot: "Period 2", time: "10:25 AM - 11:40 AM" },
+    { slot: "Period 3", time: "12:40 PM - 1:55 PM" },
+    { slot: "Period 4", time: "2:00 PM - 3:15 PM" }
+  ];
+
+  function getAssemblyTimes() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    let academicYear = year;
+    if (month < 7) { academicYear = year - 1; }
+
+    let assemblyTimeRange = "10:10 AM - 11:10 AM"; // 2026-2027 & 2027-2028
+    if (academicYear >= 2028) {
+      assemblyTimeRange = "11:10 AM - 12:10 PM";
+    }
+
+    return [
+      { slot: "Period 1", time: "9:00 AM - 10:05 AM" },
+      { slot: "Period 2", time: assemblyTimeRange },
+      { slot: "Assembly", time: assemblyTimeRange, isAssemblyRow: true },
+      { slot: "Period 3", time: "1:10 PM - 2:10 PM" },
+      { slot: "Period 4", time: "2:15 PM - 3:15 PM" }
+    ];
+  }
 
   function buildSelectOptions() {
     const select = document.getElementById('studentSelect');
@@ -292,15 +340,19 @@
     renderApp();
   }
 
-  function autoDetectDay() {
+  function checkSpecialSchedule() {
     const today = new Date();
-    const dayOfMonth = today.getDate();
-    return (dayOfMonth % 2 !== 0) ? 1 : 2;
+    if (today.getFullYear() === 2026 && today.getMonth() === 10 && today.getDate() === 11) {
+      isAssemblyDay = true;
+    } else {
+      isAssemblyDay = false;
+    }
+    currentDay = (today.getDate() % 2 !== 0) ? 1 : 2;
   }
 
   function init() {
     buildSelectOptions();
-    currentDay = autoDetectDay();
+    checkSpecialSchedule();
 
     if (activeUser && masterSchedules[activeUser]) {
       showMainApp();
@@ -329,11 +381,6 @@
     renderApp();
   }
 
-  function setDay(day) {
-    currentDay = day;
-    renderApp();
-  }
-
   function renderApp() {
     const container = document.getElementById('mainViewContainer');
     container.innerHTML = '';
@@ -341,47 +388,114 @@
     if (currentView === 'schedule') {
       const student = masterSchedules[activeUser];
       let html = `
-        <div class="glass-card" style="padding: 16px 24px;">
-          <label style="margin-bottom: 8px;">Rotation Day (Auto-detected)</label>
-          <div class="day-toggle">
-            <button class="day-btn ${currentDay === 1 ? 'active' : ''}" onclick="setDay(1)">Day 1</button>
-            <button class="day-btn ${currentDay === 2 ? 'active' : ''}" onclick="setDay(2)">Day 2</button>
-          </div>
-        </div>
         <div class="glass-card">
           <div class="schedule-header">
             <h2>${student.name}'s Schedule</h2>
-            <span class="period-time">Day ${currentDay}</span>
+            <span class="period-time">Day ${currentDay} ${isAssemblyDay ? '• Assembly' : ''}</span>
           </div>
       `;
 
       const base = student.baseSchedule;
-      let activeSchedule = (currentDay === 1) ? [
-        { slot: "Period 1", time: base[0].time, data: base[0].s1 },
-        { slot: "Period 2", time: base[1].time, data: base[1].s1 },
-        { slot: "Period 3", time: base[2].time, data: base[2].s1 },
-        { slot: "Period 4", time: base[3].time, data: base[3].s1 }
-      ] : [
-        { slot: "Period 1", time: base[0].time, data: base[1].s1 },
-        { slot: "Period 2", time: base[1].time, data: base[0].s1 },
-        { slot: "Period 3", time: base[2].time, data: base[3].s1 },
-        { slot: "Period 4", time: base[3].time, data: base[2].s1 }
-      ];
+      const order = (currentDay === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
 
-      activeSchedule.forEach(item => {
+      if (!isAssemblyDay) {
+        regularTimes.forEach((timeSlot, i) => {
+          const classIdx = order[i];
+          const s1Data = base[classIdx].s1;
+          html += `
+            <div class="period-row">
+              <div>
+                <div class="period-time">${timeSlot.slot} • ${timeSlot.time}</div>
+                <div class="period-subject">${s1Data.title}</div>
+              </div>
+              <div class="period-meta">
+                <span class="room-badge">Rm ${s1Data.room}</span>
+                <div style="margin-top: 4px; font-size: 0.75rem;">${s1Data.teacher}</div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        const assemblyTimes = getAssemblyTimes();
+        
+        // Render Period 1
+        let cIdx = order[0];
+        let sData = base[cIdx].s1;
         html += `
           <div class="period-row">
             <div>
-              <div class="period-time">${item.slot} • ${item.time}</div>
-              <div class="period-subject">${item.data.title}</div>
+              <div class="period-time">${assemblyTimes[0].slot} • ${assemblyTimes[0].time}</div>
+              <div class="period-subject">${sData.title}</div>
             </div>
             <div class="period-meta">
-              <span class="room-badge">Rm ${item.data.room}</span>
-              <div style="margin-top: 4px; font-size: 0.75rem;">${item.data.teacher}</div>
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
             </div>
           </div>
         `;
-      });
+
+        // Render Assembly Row
+        html += `
+          <div class="period-row" style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin: 6px 0;">
+            <div>
+              <div class="period-time">Assembly • ${assemblyTimes[2].time}</div>
+              <div class="period-subject" style="color: var(--text-muted); font-style: italic;">School-wide Assembly</div>
+            </div>
+            <div class="period-meta">
+              <span class="assembly-badge">Assembly</span>
+            </div>
+          </div>
+        `;
+
+        // Render Period 2 Class
+        cIdx = order[1];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[1].slot} • ${assemblyTimes[1].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+
+        // Render Period 3
+        cIdx = order[2];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[3].slot} • ${assemblyTimes[3].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+
+        // Render Period 4
+        cIdx = order[3];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[4].slot} • ${assemblyTimes[4].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+      }
+
       html += `</div>`;
       container.innerHTML = html;
 
@@ -394,17 +508,16 @@
             <button class="day-btn ${compareSemester === 's2' ? 'active' : ''}" onclick="setCompareSemester('s2')">Semester 2</button>
           </div>
           <label style="margin-bottom: 8px;">Select Students to Compare</label>
-          <div class="checkbox-grid">
+          <div class="student-grid">
       `;
 
       for (const key in masterSchedules) {
         const s = masterSchedules[key];
-        const isChecked = selectedCompareUsers.includes(key);
+        const isSelected = selectedCompareUsers.includes(key);
         html += `
-          <label class="checkbox-label">
-            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCompareUser('${key}')">
+          <div class="student-card ${isSelected ? 'active' : ''}" onclick="toggleCompareUser('${key}')">
             ${s.name}
-          </label>
+          </div>
         `;
       }
 
@@ -419,19 +532,33 @@
       `;
 
       for (let p = 0; p < 4; p++) {
+        const subjectCounts = {};
+        selectedCompareUsers.forEach(key => {
+          if (masterSchedules[key]) {
+            const subj = masterSchedules[key].baseSchedule[p][compareSemester].title;
+            subjectCounts[subj] = (subjectCounts[subj] || 0) + 1;
+          }
+        });
+
+        const hasMatch = Object.values(subjectCounts).some(count => count > 1);
+
         html += `
           <div class="compare-period-card">
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Period ${p + 1}</div>
+            <div class="compare-period-header">
+              <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Period ${p + 1}</span>
+              ${hasMatch ? '<span class="match-pill">Match</span>' : ''}
+            </div>
         `;
         
         selectedCompareUsers.forEach(key => {
           const sObj = masterSchedules[key];
           if (sObj) {
             const periodData = sObj.baseSchedule[p][compareSemester];
+            const isMatchingSubject = subjectCounts[periodData.title] > 1;
             html += `
-              <div class="compare-student-row">
+              <div class="compare-student-row ${isMatchingSubject ? 'match-row' : ''}">
                 <span style="font-weight: 500; width: 80px;">${sObj.name}</span>
-                <span style="flex: 1; text-align: center; color: var(--text-muted);">${periodData.title}</span>
+                <span style="flex: 1; text-align: center; color: ${isMatchingSubject ? '#ffffff' : 'var(--text-muted)'}; font-weight: ${isMatchingSubject ? '600' : 'normal'};">${periodData.title}</span>
                 <span class="room-badge" style="font-size: 0.75rem;">Rm ${periodData.room}</span>
               </div>
             `;
@@ -449,4 +576,5 @@
 </script>
 </body>
 </html>
+
 
