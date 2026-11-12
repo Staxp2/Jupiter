@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="aapple-touch-icon.png">
-  <link rel="apple-touch-icon" href="aapple-touch-icon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Jupiter</title>
+  <link rel="apple-touch-icon" href="aapple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="aapple-touch-icon.png" />
   <style>
     :root {
       --bg-black: #000000;
@@ -197,7 +197,7 @@
   let activeUser = localStorage.getItem('jupiter_user_profile');
   let currentView = 'schedule';
   let compareSemester = 's1';
-  let selectedCompareUsers = ["christos", "stella", "aaliyah"];
+  let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle"];
 
   const masterSchedules = {
     "aaliyah": {
@@ -213,7 +213,7 @@
       name: "Caleb",
       baseSchedule: [
         { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Xiao Yue Ding" } },
+        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } },
         { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
         { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
       ]
@@ -225,6 +225,15 @@
         { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
         { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
         { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
+      ]
+    },
+    "christopher": {
+      name: "Christopher",
+      baseSchedule: [
+        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }
       ]
     },
     "imraan": {
@@ -260,6 +269,15 @@
         { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
         { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
         { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
+        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
+      ]
+    },
+    "michelle": {
+      name: "Michelle",
+      baseSchedule: [
+        { s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
         { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
       ]
     },
@@ -420,7 +438,6 @@
       } else {
         const assemblyTimes = getAssemblyTimes();
         
-        // Render Period 1
         let cIdx = order[0];
         let sData = base[cIdx].s1;
         html += `
@@ -436,7 +453,6 @@
           </div>
         `;
 
-        // Render Assembly Row
         html += `
           <div class="period-row" style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin: 6px 0;">
             <div>
@@ -449,7 +465,6 @@
           </div>
         `;
 
-        // Render Period 2 Class
         cIdx = order[1];
         sData = base[cIdx].s1;
         html += `
@@ -465,7 +480,6 @@
           </div>
         `;
 
-        // Render Period 3
         cIdx = order[2];
         sData = base[cIdx].s1;
         html += `
@@ -481,7 +495,6 @@
           </div>
         `;
 
-        // Render Period 4
         cIdx = order[3];
         sData = base[cIdx].s1;
         html += `
