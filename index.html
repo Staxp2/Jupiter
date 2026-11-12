@@ -1,1 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jupiter</title>
+  <link rel="apple-touch-icon" href="icon-jupiter.png" />
+  <link rel="icon" type="image/png" href="icon-jupiter.png" />
+  <style>
+    :root {
+      --bg-black: #000000;
+      --text-white: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.12);
+      --glass-blur: blur(20px) saturate(180%);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .container { width: 100%; max-width: 480px; }
+    
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
+
+    /* Circular Hamburger Menu Button */
+    .menu-btn {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      color: var(--text-white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: var(--glass-shadow);
+      transition: background 0.2s;
+    }
+    .menu-btn:hover { background: rgba(255, 255, 255, 0.1); }
+    .menu-bar { width: 16px; height: 2px; background: var(--text-white); border-radius: 2px; }
+
+    /* Slide-out Sidebar Drawer */
+    .sidebar-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+      z-index: 100; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    }
+    .sidebar-overlay.open { opacity: 1; visibility: visible; }
+    
+    .sidebar {
+      position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+      background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(25px);
+      border-right: var(--glass-border); z-index: 101;
+      padding: 24px; box-sizing: border-box; transition: left 0.3s ease;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar h3 { margin: 0 0 10px 0; font-size: 1.1rem; border-bottom: var(--glass-border); padding-bottom: 12px; }
+    .sidebar-item {
+      background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
+      padding: 12px 16px; border-radius: 12px; color: var(--text-white);
+      text-align: left; font-size: 0.95rem; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      transition: background 0.2s;
+    }
+    .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .sidebar-icon { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--glass-shadow);
+      margin-bottom: 16px;
+    }
+    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+    select {
+      width: 100%; padding: 14px 16px; border-radius: 12px; border: var(--glass-border);
+      background: #111827; color: var(--text-white); font-size: 1rem; outline: none; cursor: pointer; margin-bottom: 16px; box-sizing: border-box;
+    }
+    .primary-btn {
+      width: 100%; padding: 14px; background: #ffffff; color: #000000; border: none;
+      border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    .day-toggle { display: flex; gap: 8px; }
+    .day-btn {
+      flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
+      border-radius: 10px; color: var(--text-muted); font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .day-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
+    .schedule-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; border-bottom: var(--glass-border); padding-bottom: 12px; }
+    .schedule-header h2 { font-size: 1.25rem; margin: 0; font-weight: 500; }
+    .period-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .period-row:last-child { border-bottom: none; }
+    .period-time { font-size: 0.8rem; color: var(--text-muted); }
+    .period-subject { font-weight: 500; font-size: 1.05rem; margin-top: 2px; }
+    .period-meta { font-size: 0.85rem; color: var(--text-muted); text-align: right; }
+    .room-badge { background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 500; }
+    .assembly-badge { background: rgba(255, 255, 255, 0.2); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+
+    /* Lit-up Student Selection Cards */
+    .student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .student-card {
+      background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
+      padding: 12px 14px; border-radius: 12px; color: var(--text-muted);
+      font-size: 0.95rem; font-weight: 500; text-align: center; cursor: pointer;
+      transition: all 0.2s ease; user-select: none;
+    }
+    .student-card:hover { background: rgba(255, 255, 255, 0.08); }
+    .student-card.active {
+      background: #ffffff; color: #000000; border-color: #ffffff; font-weight: 600;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Comparator & Match Indicators */
+    .compare-grid { display: flex; flex-direction: column; gap: 16px; }
+    .compare-period-card { background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 14px; padding: 14px; }
+    .compare-period-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .compare-student-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9rem; border-radius: 6px; }
+    .compare-student-row:last-child { border-bottom: none; }
+    .match-row { background: rgba(255, 255, 255, 0.08); }
+    .match-pill {
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      background: #ffffff; color: #000000; padding: 2px 8px; border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+  <h3>Menu</h3>
+  <button class="sidebar-item" onclick="switchView('schedule')">
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+    My Schedule
+  </button>
+  <button class="sidebar-item" onclick="switchView('compare')">
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    Compare Schedules
+  </button>
+  <button class="sidebar-item" onclick="showOnboarding()">
+    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+    Switch Profile
+  </button>
+</div>
+
+<div class="container">
+  <header>
+    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+      <div class="menu-bar"></div>
+      <div class="menu-bar"></div>
+    </button>
+    <h1>Jupiter</h1>
+  </header>
+
+  <!-- Onboarding Screen -->
+  <div id="onboardingCard" class="glass-card">
+    <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Welcome to Jupiter</h2>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Select your name to load your schedule.</p>
+    <label for="studentSelect">Who are you?</label>
+    <select id="studentSelect"></select>
+    <button class="primary-btn" onclick="saveProfileAndStart()">Get Started</button>
+  </div>
+
+  <!-- Main App View -->
+  <div id="mainViewContainer" style="display: none;"></div>
+</div>
+
+<script>
+  let currentDay = 1;
+  let isAssemblyDay = false;
+  let activeUser = localStorage.getItem('jupiter_user_profile');
+  let currentView = 'schedule';
+  let compareSemester = 's1';
+  let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle"];
+
+  const masterSchedules = {
+    "aaliyah": {
+      name: "Aaliyah",
+      baseSchedule: [
+        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
+        { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
+      ]
+    },
+    "caleb": {
+      name: "Caleb",
+      baseSchedule: [
+        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
+        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
+      ]
+    },
+    "christos": {
+      name: "Christos",
+      baseSchedule: [
+        { s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
+      ]
+    },
+    "christopher": {
+      name: "Christopher",
+      baseSchedule: [
+        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }
+      ]
+    },
+    "imraan": {
+      name: "Imraan",
+      baseSchedule: [
+        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }
+      ]
+    },
+    "leah": {
+      name: "Leah",
+      baseSchedule: [
+        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } },
+        { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
+      ]
+    },
+    "mahrus": {
+      name: "Mahrus",
+      baseSchedule: [
+        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
+        { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
+      ]
+    },
+    "marwa": {
+      name: "Marwa",
+      baseSchedule: [
+        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
+        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
+        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
+        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
+      ]
+    },
+    "michelle": {
+      name: "Michelle",
+      baseSchedule: [
+        { s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
+        { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
+        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
+      ]
+    },
+    "stella": {
+      name: "Stella",
+      baseSchedule: [
+        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } },
+        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
+        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }
+      ]
+    }
+  };
+
+  const regularTimes = [
+    { slot: "Period 1", time: "9:00 AM - 10:20 AM" },
+    { slot: "Period 2", time: "10:25 AM - 11:40 AM" },
+    { slot: "Period 3", time: "12:40 PM - 1:55 PM" },
+    { slot: "Period 4", time: "2:00 PM - 3:15 PM" }
+  ];
+
+  function getAssemblyTimes() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    let academicYear = year;
+    if (month < 7) { academicYear = year - 1; }
+
+    let assemblyTimeRange = "10:10 AM - 11:10 AM"; // 2026-2027 & 2027-2028
+    if (academicYear >= 2028) {
+      assemblyTimeRange = "11:10 AM - 12:10 PM";
+    }
+
+    return [
+      { slot: "Period 1", time: "9:00 AM - 10:05 AM" },
+      { slot: "Period 2", time: assemblyTimeRange },
+      { slot: "Assembly", time: assemblyTimeRange, isAssemblyRow: true },
+      { slot: "Period 3", time: "1:10 PM - 2:10 PM" },
+      { slot: "Period 4", time: "2:15 PM - 3:15 PM" }
+    ];
+  }
+
+  function buildSelectOptions() {
+    const select = document.getElementById('studentSelect');
+    select.innerHTML = '';
+    for (const key in masterSchedules) {
+      if (masterSchedules.hasOwnProperty(key)) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = masterSchedules[key].name;
+        select.appendChild(opt);
+      }
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function switchView(view) {
+    currentView = view;
+    toggleSidebar();
+    renderApp();
+  }
+
+  function setCompareSemester(sem) {
+    compareSemester = sem;
+    renderApp();
+  }
+
+  function toggleCompareUser(key) {
+    if (selectedCompareUsers.includes(key)) {
+      if (selectedCompareUsers.length > 1) {
+        selectedCompareUsers = selectedCompareUsers.filter(u => u !== key);
+      }
+    } else {
+      selectedCompareUsers.push(key);
+    }
+    renderApp();
+  }
+
+  function checkSpecialSchedule() {
+    const today = new Date();
+    if (today.getFullYear() === 2026 && today.getMonth() === 10 && today.getDate() === 11) {
+      isAssemblyDay = true;
+    } else {
+      isAssemblyDay = false;
+    }
+    currentDay = (today.getDate() % 2 !== 0) ? 1 : 2;
+  }
+
+  function init() {
+    buildSelectOptions();
+    checkSpecialSchedule();
+
+    if (activeUser && masterSchedules[activeUser]) {
+      showMainApp();
+    } else {
+      showOnboarding();
+    }
+  }
+
+  function showOnboarding() {
+    document.getElementById('onboardingCard').style.display = 'block';
+    document.getElementById('mainViewContainer').style.display = 'none';
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open')) toggleSidebar();
+  }
+
+  function saveProfileAndStart() {
+    const selectEl = document.getElementById('studentSelect');
+    activeUser = selectEl.value;
+    localStorage.setItem('jupiter_user_profile', activeUser);
+    showMainApp();
+  }
+
+  function showMainApp() {
+    document.getElementById('onboardingCard').style.display = 'none';
+    document.getElementById('mainViewContainer').style.display = 'block';
+    renderApp();
+  }
+
+  function renderApp() {
+    const container = document.getElementById('mainViewContainer');
+    container.innerHTML = '';
+
+    if (currentView === 'schedule') {
+      const student = masterSchedules[activeUser];
+      let html = `
+        <div class="glass-card">
+          <div class="schedule-header">
+            <h2>${student.name}'s Schedule</h2>
+            <span class="period-time">Day ${currentDay} ${isAssemblyDay ? '• Assembly' : ''}</span>
+          </div>
+      `;
+
+      const base = student.baseSchedule;
+      const order = (currentDay === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
+
+      if (!isAssemblyDay) {
+        regularTimes.forEach((timeSlot, i) => {
+          const classIdx = order[i];
+          const s1Data = base[classIdx].s1;
+          html += `
+            <div class="period-row">
+              <div>
+                <div class="period-time">${timeSlot.slot} • ${timeSlot.time}</div>
+                <div class="period-subject">${s1Data.title}</div>
+              </div>
+              <div class="period-meta">
+                <span class="room-badge">Rm ${s1Data.room}</span>
+                <div style="margin-top: 4px; font-size: 0.75rem;">${s1Data.teacher}</div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        const assemblyTimes = getAssemblyTimes();
+        
+        let cIdx = order[0];
+        let sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[0].slot} • ${assemblyTimes[0].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+
+        html += `
+          <div class="period-row" style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin: 6px 0;">
+            <div>
+              <div class="period-time">Assembly • ${assemblyTimes[2].time}</div>
+              <div class="period-subject" style="color: var(--text-muted); font-style: italic;">School-wide Assembly</div>
+            </div>
+            <div class="period-meta">
+              <span class="assembly-badge">Assembly</span>
+            </div>
+          </div>
+        `;
+
+        cIdx = order[1];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[1].slot} • ${assemblyTimes[1].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+
+        cIdx = order[2];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[3].slot} • ${assemblyTimes[3].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+
+        cIdx = order[3];
+        sData = base[cIdx].s1;
+        html += `
+          <div class="period-row">
+            <div>
+              <div class="period-time">${assemblyTimes[4].slot} • ${assemblyTimes[4].time}</div>
+              <div class="period-subject">${sData.title}</div>
+            </div>
+            <div class="period-meta">
+              <span class="room-badge">Rm ${sData.room}</span>
+              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      html += `</div>`;
+      container.innerHTML = html;
+
+    } else if (currentView === 'compare') {
+      let html = `
+        <div class="glass-card" style="padding: 16px 24px;">
+          <label style="margin-bottom: 8px;">Select Semester</label>
+          <div class="day-toggle" style="margin-bottom: 16px;">
+            <button class="day-btn ${compareSemester === 's1' ? 'active' : ''}" onclick="setCompareSemester('s1')">Semester 1</button>
+            <button class="day-btn ${compareSemester === 's2' ? 'active' : ''}" onclick="setCompareSemester('s2')">Semester 2</button>
+          </div>
+          <label style="margin-bottom: 8px;">Select Students to Compare</label>
+          <div class="student-grid">
+      `;
+
+      for (const key in masterSchedules) {
+        const s = masterSchedules[key];
+        const isSelected = selectedCompareUsers.includes(key);
+        html += `
+          <div class="student-card ${isSelected ? 'active' : ''}" onclick="toggleCompareUser('${key}')">
+            ${s.name}
+          </div>
+        `;
+      }
+
+      html += `
+          </div>
+        </div>
+        <div class="glass-card">
+          <div class="schedule-header">
+            <h2>Comparison (${compareSemester.toUpperCase()})</h2>
+          </div>
+          <div class="compare-grid">
+      `;
+
+      for (let p = 0; p < 4; p++) {
+        const subjectCounts = {};
+        selectedCompareUsers.forEach(key => {
+          if (masterSchedules[key]) {
+            const subj = masterSchedules[key].baseSchedule[p][compareSemester].title;
+            subjectCounts[subj] = (subjectCounts[subj] || 0) + 1;
+          }
+        });
+
+        const hasMatch = Object.values(subjectCounts).some(count => count > 1);
+
+        html += `
+          <div class="compare-period-card">
+            <div class="compare-period-header">
+              <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Period ${p + 1}</span>
+              ${hasMatch ? '<span class="match-pill">Match</span>' : ''}
+            </div>
+        `;
+        
+        selectedCompareUsers.forEach(key => {
+          const sObj = masterSchedules[key];
+          if (sObj) {
+            const periodData = sObj.baseSchedule[p][compareSemester];
+            const isMatchingSubject = subjectCounts[periodData.title] > 1;
+            html += `
+              <div class="compare-student-row ${isMatchingSubject ? 'match-row' : ''}">
+                <span style="font-weight: 500; width: 80px;">${sObj.name}</span>
+                <span style="flex: 1; text-align: center; color: ${isMatchingSubject ? '#ffffff' : 'var(--text-muted)'}; font-weight: ${isMatchingSubject ? '600' : 'normal'};">${periodData.title}</span>
+                <span class="room-badge" style="font-size: 0.75rem;">Rm ${periodData.room}</span>
+              </div>
+            `;
+          }
+        });
+
+        html += `</div>`;
+      }
+      html += `</div></div>`;
+      container.innerHTML = html;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
 
