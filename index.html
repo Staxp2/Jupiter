@@ -13,13 +13,13 @@
       --bg-canvas: #F4F3EF;
       --card-surface: #FFFFFF;
       --card-nested: #F7F6F2;
-      --card-border: rgba(0, 0, 0, 0.05);
+      --card-border: rgba(0, 0, 0, 0.06);
       --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.035);
       --text-primary: #111111;
       --text-secondary: #3A3A3C;
       --text-muted: #8E8E93;
-      --dock-surface: rgba(255, 255, 255, 0.88);
-      --dock-border: rgba(0, 0, 0, 0.07);
+      --dock-surface: rgba(255, 255, 255, 0.90);
+      --dock-border: rgba(0, 0, 0, 0.08);
       --dock-active-pill: #EFECE6;
       --dock-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       --sheet-bg: #FFFFFF;
@@ -27,7 +27,8 @@
       --accent-blue: #007AFF;
       --accent-green: #28A745;
       --accent-amber: #F59E0B;
-      --match-bg: rgba(40, 167, 69, 0.1);
+      --accent-red: #FF3B30;
+      --match-bg: rgba(40, 167, 69, 0.12);
       --match-text: #1E7E34;
     }
 
@@ -35,13 +36,13 @@
       --bg-canvas: #000000;
       --card-surface: #1C1C1E;
       --card-nested: #2C2C2E;
-      --card-border: rgba(255, 255, 255, 0.09);
+      --card-border: rgba(255, 255, 255, 0.10);
       --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
       --text-primary: #FFFFFF;
       --text-secondary: #D1D1D6;
       --text-muted: #8E8E93;
-      --dock-surface: rgba(28, 28, 30, 0.88);
-      --dock-border: rgba(255, 255, 255, 0.12);
+      --dock-surface: rgba(28, 28, 30, 0.90);
+      --dock-border: rgba(255, 255, 255, 0.13);
       --dock-active-pill: #3A3A3C;
       --dock-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
       --sheet-bg: #1C1C1E;
@@ -49,7 +50,8 @@
       --accent-blue: #5E9EFF;
       --accent-green: #32D74B;
       --accent-amber: #FBBF24;
-      --match-bg: rgba(50, 215, 75, 0.14);
+      --accent-red: #FF453A;
+      --match-bg: rgba(50, 215, 75, 0.16);
       --match-text: #32D74B;
     }
 
@@ -60,8 +62,8 @@
 
     body {
       margin: 0;
-      padding: 24px 16px 120px 16px;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px 16px 124px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-canvas);
       color: var(--text-primary);
       display: flex;
@@ -132,17 +134,15 @@
       border-radius: 22px;
       padding: 16px 18px;
       box-shadow: var(--card-shadow);
-      transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
     }
 
-    /* Standard Class Card Layout */
     .class-row {
       display: flex;
       align-items: flex-start;
       gap: 13px;
     }
 
-    /* Single-line Lunch Card Layout */
     .class-row.single-line {
       align-items: center;
     }
@@ -206,7 +206,7 @@
       margin-top: 7px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .class-task-line {
@@ -219,7 +219,7 @@
     }
 
     /* ==========================================================================
-       FLOATING MULTI-PART BOTTOM BAR (Matching Avec Mockups)
+       FLOATING MULTI-PART BOTTOM DOCK (Matching Avec Mockup)
        ========================================================================== */
     .bottom-dock-wrapper {
       position: fixed;
@@ -236,7 +236,6 @@
       pointer-events: none;
     }
 
-    /* Left Group Pill: Schedule, Tasks, Menu Bar */
     .dock-pill-group {
       pointer-events: auto;
       display: flex;
@@ -277,7 +276,6 @@
       transform: scale(0.92);
     }
 
-    /* Amber notification dot on Tasks icon */
     .task-notif-dot {
       position: absolute;
       top: 9px;
@@ -287,9 +285,13 @@
       border-radius: 50%;
       background-color: var(--accent-amber);
       border: 1.5px solid var(--card-surface);
+      display: none;
     }
 
-    /* Right Standalone Circular Floating Buttons */
+    .task-notif-dot.visible {
+      display: block;
+    }
+
     .dock-circle-btn {
       pointer-events: auto;
       width: 52px;
@@ -424,28 +426,42 @@
     }
 
     .delete-icon-btn {
-      background: none;
+      background: var(--card-nested);
       border: none;
       color: var(--text-muted);
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.15s ease, background-color 0.15s ease;
     }
 
-    /* Day Browser Strip in Search View */
-    .day-strip {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
+    .delete-icon-btn:hover {
+      color: var(--accent-red);
     }
+
+    /* Day Browser Strip in Search View (7 Days Horizontal Scroll) */
+    .day-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+    .day-strip::-webkit-scrollbar { display: none; }
 
     .day-strip-item {
+      flex: 0 0 68px;
       background: var(--card-surface);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 10px 4px;
+      padding: 10px 6px;
       text-align: center;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -458,14 +474,14 @@
     }
 
     .day-strip-name {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       text-transform: uppercase;
       opacity: 0.7;
     }
 
     .day-strip-num {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       margin-top: 2px;
     }
@@ -510,7 +526,7 @@
       border-top: 1px solid var(--card-border);
       padding: 14px 20px 36px 20px;
       z-index: 201;
-      max-height: 86vh;
+      max-height: 88vh;
       overflow-y: auto;
       transition: bottom 0.32s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
@@ -556,7 +572,6 @@
       cursor: pointer;
     }
 
-    /* Form Controls inside Sheets */
     .form-label {
       display: block;
       font-size: 0.74rem;
@@ -676,19 +691,19 @@
 <div class="app-shell">
   <!-- Clean Top Header (Greeting + Day Pill Only) -->
   <header class="top-header">
-    <h1 class="greeting-heading" id="greetingHeading" onclick="openProfileSheet()">Good morning, Christos.</h1>
-    <button class="day-pill" id="dayPillBtn" onclick="toggleDay()">Day 1</button>
+    <h1 class="greeting-heading" id="greetingHeading" onclick="window.openProfileSheet()">Good morning, Christos.</h1>
+    <button type="button" class="day-pill" id="dayPillBtn" onclick="window.toggleDay()">Day 1</button>
   </header>
 
   <!-- Main Content Area -->
   <main id="mainContent"></main>
 </div>
 
-<!-- Exact Multi-Part Floating Bottom Dock -->
+<!-- Multi-Part Floating Bottom Dock -->
 <nav class="bottom-dock-wrapper" aria-label="Primary Navigation">
   <!-- Left Pill Group (Schedule, Tasks, Menu Bar) -->
   <div class="dock-pill-group">
-    <button class="dock-group-btn active" id="navSchedule" onclick="switchView('schedule')" title="Schedule">
+    <button type="button" class="dock-group-btn active" id="navSchedule" onclick="window.switchView('schedule')" title="Schedule">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
         <rect x="4" y="4" width="16" height="4" rx="1.5"></rect>
         <rect x="4" y="10" width="16" height="4" rx="1.5"></rect>
@@ -696,7 +711,7 @@
       </svg>
     </button>
 
-    <button class="dock-group-btn" id="navTasks" onclick="switchView('tasks')" title="Tasks">
+    <button type="button" class="dock-group-btn" id="navTasks" onclick="window.switchView('tasks')" title="Tasks">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="9"></circle>
         <polyline points="12 7 12 12 15 14"></polyline>
@@ -704,7 +719,7 @@
       <span class="task-notif-dot" id="taskNotifDot"></span>
     </button>
 
-    <button class="dock-group-btn" id="navMenu" onclick="openMenuSheet()" title="Menu Bar">
+    <button type="button" class="dock-group-btn" id="navMenu" onclick="window.openMenuSheet()" title="Menu Bar">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="7 9 12 4 17 9"></polyline>
         <polyline points="7 15 12 20 17 15"></polyline>
@@ -713,7 +728,7 @@
   </div>
 
   <!-- Standalone Circular Button 1: New Task / Event -->
-  <button class="dock-circle-btn" id="navNew" onclick="openNewSheet('task')" title="New Task or Event">
+  <button type="button" class="dock-circle-btn" id="navNew" onclick="window.openNewSheet('task')" title="New Task or Event">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -721,7 +736,7 @@
   </button>
 
   <!-- Standalone Circular Button 2: Search & Other Days -->
-  <button class="dock-circle-btn" id="navSearch" onclick="switchView('search')" title="Search & Calendar Days">
+  <button type="button" class="dock-circle-btn" id="navSearch" onclick="window.switchView('search')" title="Search & Calendar Days">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="11" cy="11" r="7.5"></circle>
       <line x1="20.5" y1="20.5" x2="16.35" y2="16.35"></line>
@@ -729,772 +744,942 @@
   </button>
 
   <!-- Standalone Circular Button 3: Profile & Compare -->
-  <button class="dock-circle-btn" id="navProfile" onclick="openProfileSheet()" title="Profile & Compare">
+  <button type="button" class="dock-circle-btn" id="navProfile" onclick="window.openProfileSheet()" title="Profile & Compare">
     <div class="profile-avatar-ring" id="dockProfileInitials">CH</div>
   </button>
 </nav>
 
 <!-- Bottom Sheet Backdrop & Container -->
-<div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet()"></div>
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="window.closeSheet()"></div>
 <div class="bottom-sheet" id="bottomSheet" onclick="event.stopPropagation()"></div>
 
 <script>
-  /* ==========================================================================
-     SAFE STORAGE HELPER
-     ========================================================================== */
-  const safeStorage = {
-    get(key, fallback) {
-      try {
-        const val = localStorage.getItem(key);
-        return val !== null ? val : fallback;
-      } catch (e) {
-        return fallback;
+  (function () {
+    /* ==========================================================================
+       BULLETPROOF STORAGE HELPER (With In-Memory Fallback for Sandboxed Iframes)
+       ========================================================================== */
+    const memoryStore = {};
+    const safeStorage = {
+      get(key, fallback) {
+        try {
+          const val = window.localStorage.getItem(key);
+          if (val !== null) return val;
+        } catch (e) {
+          // localStorage blocked by sandbox; fall back to memoryStore
+        }
+        return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : fallback;
+      },
+      set(key, val) {
+        memoryStore[key] = val;
+        try {
+          window.localStorage.setItem(key, val);
+        } catch (e) {
+          // localStorage blocked by sandbox; safely stored in memoryStore
+        }
       }
-    },
-    set(key, val) {
-      try {
-        localStorage.setItem(key, val);
-      } catch (e) {
-        // Ignore storage errors in restricted environments
-      }
+    };
+
+    /* ==========================================================================
+       MASTER SCHEDULES & SUBJECT METADATA
+       ========================================================================== */
+    const masterSchedules = {
+      "aaliyah": { name: "Aaliyah", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
+      "caleb": { name: "Caleb", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+      "christos": { name: "Christos", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
+      "christopher": { name: "Christopher", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }] },
+      "imraan": { name: "Imraan", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }] },
+      "leah": { name: "Leah", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } }, { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
+      "mahrus": { name: "Mahrus", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
+      "marwa": { name: "Marwa", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
+      "michelle": { name: "Michelle", baseSchedule: [{ s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
+      "moshe": { name: "Moshe", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+      "robin": { name: "Robin", baseSchedule: [{ s1: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "322", teacher: "Ryan Marrast" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+      "stella": { name: "Stella", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }] }
+    };
+
+    const subjectMeta = {
+      "Science": { emoji: "🧪", bg: "#86EFAC" },
+      "Geography": { emoji: "🌍", bg: "#FDE047" },
+      "Lunch": { emoji: "🍔", bg: "#38BDF8" },
+      "Math": { emoji: "🔢", bg: "#A5B4FC" },
+      "French": { emoji: "🇫🇷", bg: "#93C5FD" },
+      "English": { emoji: "📚", bg: "#FDBA74" },
+      "Drama": { emoji: "🎭", bg: "#F9A8D4" },
+      "Gym": { emoji: "⚽", bg: "#6EE7B7" },
+      "Computer Technology": { emoji: "💻", bg: "#CBD5E1" },
+      "Communications Technology": { emoji: "🖥️", bg: "#C4B5FD" },
+      "Family Studies": { emoji: "🍳", bg: "#FCD34D" },
+      "Visual Arts": { emoji: "🎨", bg: "#FDA4AF" },
+      "Music": { emoji: "🎵", bg: "#D8B4FE" }
+    };
+
+    const regularBellTimes = [
+      { type: "class", periodIdx: 0, time: "9:00 AM", sortMinutes: 540 },
+      { type: "class", periodIdx: 1, time: "10:25 AM", sortMinutes: 625 },
+      { type: "lunch", time: "11:40 AM", sortMinutes: 700 },
+      { type: "class", periodIdx: 2, time: "12:40 PM", sortMinutes: 760 },
+      { type: "class", periodIdx: 3, time: "2:00 PM", sortMinutes: 840 }
+    ];
+
+    /* ==========================================================================
+       DATE & TIME UTILITIES
+       ========================================================================== */
+    function getLocalDateISO(dateObj = new Date()) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     }
-  };
 
-  /* ==========================================================================
-     MASTER SCHEDULES & SUBJECT METADATA
-     ========================================================================== */
-  const masterSchedules = {
-    "aaliyah": { name: "Aaliyah", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
-    "caleb": { name: "Caleb", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
-    "christos": { name: "Christos", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
-    "christopher": { name: "Christopher", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }] },
-    "imraan": { name: "Imraan", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }] },
-    "leah": { name: "Leah", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } }, { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
-    "mahrus": { name: "Mahrus", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
-    "marwa": { name: "Marwa", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
-    "michelle": { name: "Michelle", baseSchedule: [{ s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
-    "moshe": { name: "Moshe", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
-    "robin": { name: "Robin", baseSchedule: [{ s1: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "322", teacher: "Ryan Marrast" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
-    "stella": { name: "Stella", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }] }
-  };
-
-  const subjectMeta = {
-    "Science": { emoji: "🧪", bg: "#86EFAC" },
-    "Geography": { emoji: "🌍", bg: "#FDE047" },
-    "Lunch": { emoji: "🍔", bg: "#38BDF8" },
-    "Math": { emoji: "🔢", bg: "#A5B4FC" },
-    "French": { emoji: "🇫🇷", bg: "#93C5FD" },
-    "English": { emoji: "📚", bg: "#FDBA74" },
-    "Drama": { emoji: "🎭", bg: "#F9A8D4" },
-    "Gym": { emoji: "⚽", bg: "#6EE7B7" },
-    "Computer Technology": { emoji: "💻", bg: "#CBD5E1" },
-    "Communications Technology": { emoji: "🖥️", bg: "#C4B5FD" },
-    "Family Studies": { emoji: "🍳", bg: "#FCD34D" },
-    "Visual Arts": { emoji: "🎨", bg: "#FDA4AF" },
-    "Music": { emoji: "🎵", bg: "#D8B4FE" }
-  };
-
-  const regularBellTimes = [
-    { type: "class", periodIdx: 0, time: "9:00 AM", sortMinutes: 540 },
-    { type: "class", periodIdx: 1, time: "10:25 AM", sortMinutes: 625 },
-    { type: "lunch", time: "11:40 AM", sortMinutes: 700 },
-    { type: "class", periodIdx: 2, time: "12:40 PM", sortMinutes: 760 },
-    { type: "class", periodIdx: 3, time: "2:00 PM", sortMinutes: 840 }
-  ];
-
-  const assemblyBellTimes = [
-    { type: "class", periodIdx: 0, time: "9:00 AM", sortMinutes: 540 },
-    { type: "assembly", time: "10:10 AM", sortMinutes: 610 },
-    { type: "class", periodIdx: 1, time: "11:15 AM", sortMinutes: 675 },
-    { type: "lunch", time: "12:15 PM", sortMinutes: 735 },
-    { type: "class", periodIdx: 2, time: "1:15 PM", sortMinutes: 795 },
-    { type: "class", periodIdx: 3, time: "2:15 PM", sortMinutes: 855 }
-  ];
-
-  /* ==========================================================================
-     APPLICATION STATE
-     ========================================================================== */
-  let state = {
-    theme: safeStorage.get("jupiter_theme", "light"),
-    activeUser: safeStorage.get("jupiter_user", "christos"),
-    currentDay: 1,
-    activeSemester: safeStorage.get("jupiter_semester", "s1"),
-    isAssembly: safeStorage.get("jupiter_assembly", "false") === "true",
-    currentView: "schedule", // 'schedule' | 'tasks' | 'search'
-    taskFilter: "All",
-    searchDayOffset: 0,
-    compareSemester: "s1",
-    selectedFriends: ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"],
-    tasks: (() => {
-      try {
-        const raw = safeStorage.get("jupiter_tasks_v3", null);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
-    })(),
-    customEvents: (() => {
-      try {
-        const raw = safeStorage.get("jupiter_events_v2", null);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
-    })()
-  };
-
-  function persistState() {
-    safeStorage.set("jupiter_theme", state.theme);
-    safeStorage.set("jupiter_user", state.activeUser);
-    safeStorage.set("jupiter_semester", state.activeSemester);
-    safeStorage.set("jupiter_assembly", String(state.isAssembly));
-    safeStorage.set("jupiter_tasks_v3", JSON.stringify(state.tasks));
-    safeStorage.set("jupiter_events_v2", JSON.stringify(state.customEvents));
-  }
-
-  /* ==========================================================================
-     THEME & HEADER SYNC
-     ========================================================================== */
-  function applyTheme(theme) {
-    state.theme = theme;
-    document.documentElement.setAttribute("data-theme", theme);
-    const meta = document.getElementById("metaThemeColor");
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#000000" : "#F4F3EF");
-    persistState();
-  }
-
-  function toggleTheme() {
-    applyTheme(state.theme === "light" ? "dark" : "light");
-  }
-
-  function toggleDay() {
-    state.currentDay = state.currentDay === 1 ? 2 : 1;
-    render();
-  }
-
-  function switchView(view) {
-    state.currentView = view;
-    render();
-  }
-
-  function parseTimeToMinutes(timeStr) {
-    if (!timeStr) return 900;
-    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
-    if (!match) return 900;
-    let hrs = parseInt(match[1], 10);
-    const mins = parseInt(match[2], 10);
-    const period = (match[3] || "").toUpperCase();
-    if (period === "PM" && hrs !== 12) hrs += 12;
-    if (period === "AM" && hrs === 12) hrs = 0;
-    return hrs * 60 + mins;
-  }
-
-  function updateChrome() {
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    document.getElementById("greetingHeading").textContent = `Good morning, ${student.name}.`;
-    document.getElementById("dayPillBtn").textContent = `Day ${state.currentDay}`;
-    document.getElementById("dockProfileInitials").textContent = student.name.slice(0, 2).toUpperCase();
-
-    // Update Dock Active Indicators
-    document.getElementById("navSchedule").classList.toggle("active", state.currentView === "schedule");
-    document.getElementById("navTasks").classList.toggle("active", state.currentView === "tasks");
-    document.getElementById("navSearch").classList.toggle("active", state.currentView === "search");
-
-    // Update Tasks notification dot visibility
-    const hasOpenTasks = state.tasks.some(t => !t.completed);
-    document.getElementById("taskNotifDot").style.display = hasOpenTasks ? "block" : "none";
-  }
-
-  /* ==========================================================================
-     MAIN RENDERER
-     ========================================================================== */
-  function render() {
-    updateChrome();
-    const main = document.getElementById("mainContent");
-
-    if (state.currentView === "schedule") {
-      main.innerHTML = renderScheduleHTML(state.currentDay);
-    } else if (state.currentView === "tasks") {
-      main.innerHTML = renderTasksHTML();
-    } else if (state.currentView === "search") {
-      main.innerHTML = renderSearchHTML();
-      runSearchFilter();
+    function formatFriendlyDate(isoStr) {
+      if (!isoStr) return "";
+      const parts = isoStr.split("-");
+      if (parts.length !== 3) return isoStr;
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     }
-  }
 
-  function renderScheduleHTML(dayNum) {
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    const order = dayNum === 1 ? [0, 1, 2, 3] : [1, 0, 3, 2];
-    const bellSchedule = state.isAssembly ? assemblyBellTimes : regularBellTimes;
+    function parseTimeToMinutes(timeStr) {
+      if (!timeStr) return 900;
+      const clean = String(timeStr).trim().toUpperCase();
+      const match = clean.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/);
+      if (!match) return 900;
+      let hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      const meridiem = match[3];
+      if (meridiem === "PM" && hours < 12) hours += 12;
+      if (meridiem === "AM" && hours === 12) hours = 0;
+      return hours * 60 + mins;
+    }
 
-    // Build unified chronological items list (classes + lunch + custom events)
-    const items = [];
+    function format24To12(time24) {
+      if (!time24) return "3:15 PM";
+      if (time24.toUpperCase().includes("AM") || time24.toUpperCase().includes("PM")) {
+        return time24;
+      }
+      const parts = time24.split(":");
+      if (parts.length < 2) return time24;
+      let h = parseInt(parts[0], 10);
+      const m = parts[1];
+      const suffix = h >= 12 ? "PM" : "AM";
+      h = h % 12 || 12;
+      return `${h}:${m} ${suffix}`;
+    }
 
-    bellSchedule.forEach(slot => {
-      if (slot.type === "lunch") {
-        const meta = subjectMeta["Lunch"];
-        items.push({
-          sortMinutes: slot.sortMinutes,
-          html: `
-            <div class="avec-card">
-              <div class="class-row single-line">
-                <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
-                <div class="class-body">
-                  <div class="class-top-line">
-                    <span class="class-name">Lunch</span>
-                    <span class="class-time">${slot.time}</span>
+    function escapeHTML(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    /* ==========================================================================
+       APPLICATION STATE (Zero tasks on initial load)
+       ========================================================================== */
+    const state = {
+      theme: safeStorage.get("jupiter_theme", "light"),
+      activeUser: safeStorage.get("jupiter_user", "christos"),
+      currentDay: 1,
+      viewingDateISO: getLocalDateISO(new Date()),
+      activeSemester: safeStorage.get("jupiter_semester", "s1"),
+      currentView: "schedule", // 'schedule' | 'tasks' | 'search'
+      taskFilter: "All",
+      searchDayOffset: 0,
+      compareSemester: "s1",
+      selectedFriends: ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"],
+      tasks: (() => {
+        try {
+          const raw = safeStorage.get("jupiter_tasks_clean_v1", null);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      })(),
+      customEvents: (() => {
+        try {
+          const raw = safeStorage.get("jupiter_events_clean_v1", null);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      })()
+    };
+
+    function persistState() {
+      safeStorage.set("jupiter_theme", state.theme);
+      safeStorage.set("jupiter_user", state.activeUser);
+      safeStorage.set("jupiter_semester", state.activeSemester);
+      safeStorage.set("jupiter_tasks_clean_v1", JSON.stringify(state.tasks));
+      safeStorage.set("jupiter_events_clean_v1", JSON.stringify(state.customEvents));
+    }
+
+    /* ==========================================================================
+       THEME & CHROME UPDATES
+       ========================================================================== */
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      const meta = document.getElementById("metaThemeColor");
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#000000" : "#F4F3EF");
+      persistState();
+    }
+
+    function updateChrome() {
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      document.getElementById("greetingHeading").textContent = `Good morning, ${student.name}.`;
+      document.getElementById("dayPillBtn").textContent = `Day ${state.currentDay}`;
+      document.getElementById("dockProfileInitials").textContent = student.name.slice(0, 2).toUpperCase();
+
+      // Update active dock states
+      document.getElementById("navSchedule").classList.toggle("active", state.currentView === "schedule");
+      document.getElementById("navTasks").classList.toggle("active", state.currentView === "tasks");
+      document.getElementById("navSearch").classList.toggle("active", state.currentView === "search");
+
+      // Show amber notification dot only when uncompleted tasks exist
+      const hasActiveTasks = state.tasks.some(t => !t.completed);
+      document.getElementById("taskNotifDot").classList.toggle("visible", hasActiveTasks);
+    }
+
+    /* ==========================================================================
+       SCHEDULE RENDERER
+       ========================================================================== */
+    function getEventScheduleLabel(ev) {
+      const todayISO = getLocalDateISO(new Date());
+      if (ev.repeatType === "date" && ev.date) {
+        return ev.date === todayISO ? "Today Only" : formatFriendlyDate(ev.date);
+      }
+      if (ev.day === "all") return "Every Day";
+      return `Day ${ev.day}`;
+    }
+
+    function renderScheduleHTML(dayNum, targetDateISO = state.viewingDateISO) {
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      const order = dayNum === 1 ? [0, 1, 2, 3] : [1, 0, 3, 2];
+      const items = [];
+
+      // Add regular classes & Lunch
+      regularBellTimes.forEach(slot => {
+        if (slot.type === "lunch") {
+          const meta = subjectMeta["Lunch"];
+          items.push({
+            sortMinutes: slot.sortMinutes,
+            html: `
+              <div class="avec-card">
+                <div class="class-row single-line">
+                  <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
+                  <div class="class-body">
+                    <div class="class-top-line">
+                      <span class="class-name">Lunch</span>
+                      <span class="class-time">${slot.time}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          `
-        });
-      } else if (slot.type === "assembly") {
-        items.push({
-          sortMinutes: slot.sortMinutes,
-          html: `
-            <div class="avec-card">
-              <div class="class-row">
-                <div class="emoji-circle" style="background-color: #FCA5A5;">📢</div>
-                <div class="class-body">
-                  <div class="class-top-line">
-                    <span class="class-name">School Assembly</span>
-                    <span class="class-time">${slot.time}</span>
+            `
+          });
+        } else {
+          const courseIdx = order[slot.periodIdx];
+          const course = student.baseSchedule[courseIdx][state.activeSemester];
+          const meta = subjectMeta[course.title] || { emoji: "📖", bg: "#E2E8F0" };
+          const activeClassTasks = state.tasks.filter(
+            t => !t.completed && t.classKey.toLowerCase() === course.title.toLowerCase()
+          );
+
+          const tasksHTML = activeClassTasks.length > 0
+            ? `<div class="class-tasks-preview">
+                ${activeClassTasks.map(t => `<div class="class-task-line">${escapeHTML(t.title)}${t.dueNote ? ` (${escapeHTML(t.dueNote)})` : ""}</div>`).join("")}
+               </div>`
+            : "";
+
+          items.push({
+            sortMinutes: slot.sortMinutes,
+            html: `
+              <div class="avec-card">
+                <div class="class-row">
+                  <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
+                  <div class="class-body">
+                    <div class="class-top-line">
+                      <span class="class-name">${escapeHTML(course.title)}</span>
+                      <span class="class-time">${slot.time}</span>
+                    </div>
+                    <div class="class-meta">${escapeHTML(course.teacher)} | Room ${escapeHTML(course.room)}</div>
+                    ${tasksHTML}
                   </div>
-                  <div class="class-meta">Main Auditorium | All Grades</div>
                 </div>
               </div>
-            </div>
-          `
-        });
-      } else {
-        const actualPeriodIndex = order[slot.periodIdx];
-        const course = student.baseSchedule[actualPeriodIndex][state.activeSemester];
-        const meta = subjectMeta[course.title] || { emoji: "📖", bg: "#E5E7EB" };
-        const activeClassTasks = state.tasks.filter(
-          t => !t.completed && t.classKey.toLowerCase() === course.title.toLowerCase()
-        );
-
-        const taskLinesHTML = activeClassTasks.length > 0
-          ? `<div class="class-tasks-preview">
-              ${activeClassTasks.map(t => `<div class="class-task-line">${escapeHTML(t.title)}</div>`).join("")}
-            </div>`
-          : "";
-
-        items.push({
-          sortMinutes: slot.sortMinutes,
-          html: `
-            <div class="avec-card">
-              <div class="class-row">
-                <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
-                <div class="class-body">
-                  <div class="class-top-line">
-                    <span class="class-name">${escapeHTML(course.title)}</span>
-                    <span class="class-time">${slot.time}</span>
-                  </div>
-                  <div class="class-meta">${escapeHTML(course.teacher)} | Room ${escapeHTML(course.room)}</div>
-                  ${taskLinesHTML}
-                </div>
-              </div>
-            </div>
-          `
-        });
-      }
-    });
-
-    // Inject custom events scheduled for this day
-    state.customEvents
-      .filter(ev => ev.day === "all" || Number(ev.day) === dayNum)
-      .forEach(ev => {
-        items.push({
-          sortMinutes: parseTimeToMinutes(ev.time),
-          html: `
-            <div class="avec-card">
-              <div class="class-row">
-                <div class="emoji-circle" style="background-color: #BAE6FD;">${ev.emoji || "📅"}</div>
-                <div class="class-body">
-                  <div class="class-top-line">
-                    <span class="class-name">${escapeHTML(ev.title)}</span>
-                    <span class="class-time">${escapeHTML(ev.time)}</span>
-                  </div>
-                  <div class="class-meta">${escapeHTML(ev.location || "Calendar Event")}</div>
-                </div>
-              </div>
-            </div>
-          `
-        });
-      });
-
-    items.sort((a, b) => a.sortMinutes - b.sortMinutes);
-
-    return `<div class="card-stack">${items.map(i => i.html).join("")}</div>`;
-  }
-
-  function renderTasksHTML() {
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    const studentSubjects = ["All", ...new Set(student.baseSchedule.map(p => p[state.activeSemester].title))];
-
-    const chipsHTML = studentSubjects.map(subj => `
-      <button class="chip-btn ${state.taskFilter === subj ? "active" : ""}" onclick="setTaskFilter('${escapeHTML(subj)}')">
-        ${escapeHTML(subj)}
-      </button>
-    `).join("");
-
-    const filteredTasks = state.taskFilter === "All"
-      ? state.tasks
-      : state.tasks.filter(t => t.classKey.toLowerCase() === state.taskFilter.toLowerCase());
-
-    let listHTML = "";
-    if (filteredTasks.length === 0) {
-      listHTML = `
-        <div class="avec-card" style="text-align: center; padding: 34px 20px; color: var(--text-muted);">
-          No tasks in this view. Tap the compose button below to add one.
-        </div>
-      `;
-    } else {
-      listHTML = filteredTasks.map(t => `
-        <div class="avec-card task-item-card">
-          <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
-            <button class="task-check-circle ${t.completed ? "checked" : ""}" onclick="toggleTaskComplete(${t.id})" aria-label="Toggle task">
-              ✓
-            </button>
-            <div style="min-width: 0; flex: 1;">
-              <div class="task-item-text ${t.completed ? "completed" : ""}">${escapeHTML(t.title)}</div>
-              <div class="task-item-tag">${escapeHTML(t.classKey)}</div>
-            </div>
-          </div>
-          <button class="delete-icon-btn" onclick="deleteTask(${t.id})" title="Delete task">×</button>
-        </div>
-      `).join("");
-    }
-
-    return `
-      <div class="section-header-row">
-        <h2 class="section-title">Tasks</h2>
-        <button class="chip-btn active" onclick="openNewSheet('task')">+ New Task</button>
-      </div>
-      <div class="filter-chips">${chipsHTML}</div>
-      <div class="card-stack">${listHTML}</div>
-    `;
-  }
-
-  function setTaskFilter(subj) {
-    state.taskFilter = subj;
-    render();
-  }
-
-  function toggleTaskComplete(id) {
-    state.tasks = state.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-    persistState();
-    render();
-  }
-
-  function deleteTask(id) {
-    state.tasks = state.tasks.filter(t => t.id !== id);
-    persistState();
-    render();
-  }
-
-  function renderSearchHTML() {
-    const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    const baseDate = new Date();
-    let stripHTML = `<div class="day-strip">`;
-
-    for (let offset = 0; offset < 5; offset++) {
-      const d = new Date(baseDate);
-      d.setDate(baseDate.getDate() + offset);
-      const label = offset === 0 ? "Today" : dayNames[d.getDay() % 5];
-      const dayCycle = ((state.currentDay - 1 + offset) % 2) + 1;
-      const isSelected = state.searchDayOffset === offset;
-
-      stripHTML += `
-        <div class="day-strip-item ${isSelected ? "active" : ""}" onclick="selectSearchDay(${offset})">
-          <div class="day-strip-name">${label}</div>
-          <div class="day-strip-num">${d.getDate()}</div>
-          <div class="day-strip-badge">Day ${dayCycle}</div>
-        </div>
-      `;
-    }
-    stripHTML += `</div>`;
-
-    return `
-      <div class="avec-card" style="margin-bottom: 14px; padding: 14px 16px;">
-        <label class="form-label" for="searchField">Search Tasks, Classes & Events</label>
-        <input type="text" id="searchField" class="form-control" style="margin-bottom: 0;" placeholder="Search by class, teacher, room, or task..." oninput="runSearchFilter()" />
-      </div>
-      ${stripHTML}
-      <div id="searchResultsContainer"></div>
-    `;
-  }
-
-  function selectSearchDay(offset) {
-    state.searchDayOffset = offset;
-    render();
-  }
-
-  function runSearchFilter() {
-    const input = document.getElementById("searchField");
-    const container = document.getElementById("searchResultsContainer");
-    if (!container) return;
-
-    const query = (input ? input.value : "").trim().toLowerCase();
-    const previewDay = ((state.currentDay - 1 + state.searchDayOffset) % 2) + 1;
-
-    if (!query) {
-      container.innerHTML = `
-        <div class="section-header-row">
-          <h3 class="section-title" style="font-size: 0.95rem; color: var(--text-muted);">
-            Previewing Day ${previewDay} Schedule
-          </h3>
-        </div>
-        ${renderScheduleHTML(previewDay)}
-      `;
-      return;
-    }
-
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    const matches = [];
-
-    state.tasks.forEach(t => {
-      if (t.title.toLowerCase().includes(query) || t.classKey.toLowerCase().includes(query)) {
-        matches.push({
-          badge: `Task • ${t.classKey}`,
-          title: t.title,
-          sub: t.completed ? "Completed" : "Active Task"
-        });
-      }
-    });
-
-    student.baseSchedule.forEach((period, idx) => {
-      ["s1", "s2"].forEach(sem => {
-        const c = period[sem];
-        if (
-          c.title.toLowerCase().includes(query) ||
-          c.teacher.toLowerCase().includes(query) ||
-          c.room.toLowerCase().includes(query)
-        ) {
-          matches.push({
-            badge: `Period ${idx + 1} • Sem ${sem.toUpperCase()}`,
-            title: c.title,
-            sub: `${c.teacher} | Room ${c.room}`
+            `
           });
         }
       });
-    });
 
-    state.customEvents.forEach(ev => {
-      if (ev.title.toLowerCase().includes(query) || (ev.location || "").toLowerCase().includes(query)) {
-        matches.push({
-          badge: `Event • ${ev.time}`,
-          title: ev.title,
-          sub: ev.location || "Custom Event"
+      // Inject matching standalone or repeating custom calendar events
+      state.customEvents
+        .filter(ev => {
+          if (ev.repeatType === "date") {
+            return ev.date === targetDateISO;
+          }
+          return ev.day === "all" || Number(ev.day) === dayNum;
+        })
+        .forEach(ev => {
+          const scheduleLabel = getEventScheduleLabel(ev);
+          const locationPart = ev.location ? `${escapeHTML(ev.location)} • ` : "";
+          items.push({
+            sortMinutes: parseTimeToMinutes(ev.time),
+            html: `
+              <div class="avec-card">
+                <div class="class-row">
+                  <div class="emoji-circle" style="background-color: #BAE6FD;">${escapeHTML(ev.emoji || "📅")}</div>
+                  <div class="class-body">
+                    <div class="class-top-line">
+                      <span class="class-name">${escapeHTML(ev.title)}</span>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="class-time">${escapeHTML(ev.time)}</span>
+                        <button type="button" class="delete-icon-btn" onclick="window.deleteCustomEvent(${ev.id})" title="Remove event" aria-label="Remove event">×</button>
+                      </div>
+                    </div>
+                    <div class="class-meta">${locationPart}${escapeHTML(scheduleLabel)}</div>
+                  </div>
+                </div>
+              </div>
+            `
+          });
         });
-      }
-    });
 
-    if (matches.length === 0) {
-      container.innerHTML = `
-        <div class="avec-card" style="text-align: center; padding: 28px; color: var(--text-muted);">
-          No matching tasks, classes, or events found.
-        </div>
-      `;
-      return;
+      items.sort((a, b) => a.sortMinutes - b.sortMinutes);
+      return `<div class="card-stack">${items.map(i => i.html).join("")}</div>`;
     }
 
-    container.innerHTML = `
-      <div class="card-stack">
-        ${matches.map(m => `
-          <div class="avec-card">
-            <div class="task-item-tag" style="margin-top: 0; margin-bottom: 3px;">${escapeHTML(m.badge)}</div>
-            <div class="class-name">${escapeHTML(m.title)}</div>
-            <div class="class-meta" style="margin-top: 3px;">${escapeHTML(m.sub)}</div>
-          </div>
-        `).join("")}
-      </div>
-    `;
-  }
+    /* ==========================================================================
+       TASKS VIEW RENDERER
+       ========================================================================== */
+    function renderTasksHTML() {
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      const studentClasses = student.baseSchedule.map(p => p[state.activeSemester].title);
+      const filterOptions = ["All", ...Array.from(new Set(studentClasses)), "General"];
 
-  /* ==========================================================================
-     BOTTOM SHEETS (Menu Bar, New Task/Event, Profile & Compare)
-     ========================================================================== */
-  function openSheet(innerHTML) {
-    const sheet = document.getElementById("bottomSheet");
-    const backdrop = document.getElementById("sheetBackdrop");
-    sheet.innerHTML = `<div class="sheet-grabber"></div>${innerHTML}`;
-    backdrop.classList.add("open");
-    sheet.classList.add("open");
-  }
-
-  function closeSheet() {
-    document.getElementById("sheetBackdrop").classList.remove("open");
-    document.getElementById("bottomSheet").classList.remove("open");
-  }
-
-  function openMenuSheet() {
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    openSheet(`
-      <div class="sheet-header">
-        <h3 class="sheet-title">Menu Bar</h3>
-        <button class="sheet-close" onclick="closeSheet()">×</button>
-      </div>
-
-      <button class="menu-row-btn" onclick="toggleTheme(); openMenuSheet();">
-        <span>Appearance</span>
-        <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
-      </button>
-
-      <button class="menu-row-btn" onclick="toggleSemester(); openMenuSheet();">
-        <span>Semester</span>
-        <span style="color: var(--accent-blue);">Semester ${state.activeSemester === "s1" ? "1" : "2"}</span>
-      </button>
-
-      <button class="menu-row-btn" onclick="toggleDay(); openMenuSheet();">
-        <span>Schedule Cycle</span>
-        <span style="color: var(--accent-blue);">Day ${state.currentDay}</span>
-      </button>
-
-      <button class="menu-row-btn" onclick="toggleAssembly(); openMenuSheet();">
-        <span>Assembly Bell Schedule</span>
-        <span style="color: ${state.isAssembly ? "var(--accent-green)" : "var(--text-muted)"};">${state.isAssembly ? "On" : "Off"}</span>
-      </button>
-
-      <button class="menu-row-btn" onclick="openCompareSheet()">
-        <span>Compare Schedules</span>
-        <span style="color: var(--text-muted);">›</span>
-      </button>
-
-      <button class="menu-row-btn" onclick="openProfileSheet()">
-        <span>Switch Profile (${escapeHTML(student.name)})</span>
-        <span style="color: var(--text-muted);">›</span>
-      </button>
-    `);
-  }
-
-  function toggleSemester() {
-    state.activeSemester = state.activeSemester === "s1" ? "s2" : "s1";
-    persistState();
-    render();
-  }
-
-  function toggleAssembly() {
-    state.isAssembly = !state.isAssembly;
-    persistState();
-    render();
-  }
-
-  function openNewSheet(mode = "task") {
-    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
-    const classOptions = student.baseSchedule
-      .map(p => p[state.activeSemester].title)
-      .concat(["General"])
-      .filter((v, idx, arr) => arr.indexOf(v) === idx)
-      .map(subj => `<option value="${escapeHTML(subj)}">${escapeHTML(subj)}</option>`)
-      .join("");
-
-    const bodyHTML = mode === "task"
-      ? `
-        <label class="form-label" for="taskSubjectSelect">Class</label>
-        <select id="taskSubjectSelect" class="form-control">${classOptions}</select>
-
-        <label class="form-label" for="taskTitleInput">Task Details</label>
-        <input type="text" id="taskTitleInput" class="form-control" placeholder="e.g., Periodic Table test on April 1st." />
-
-        <button class="primary-action-btn" onclick="submitNewTask()">Save Task</button>
-      `
-      : `
-        <label class="form-label" for="eventTitleInput">Event Title</label>
-        <input type="text" id="eventTitleInput" class="form-control" placeholder="e.g., Robotics Club" />
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label class="form-label" for="eventTimeInput">Time</label>
-            <input type="text" id="eventTimeInput" class="form-control" value="3:15 PM" placeholder="3:15 PM" />
-          </div>
-          <div>
-            <label class="form-label" for="eventDaySelect">Schedule Day</label>
-            <select id="eventDaySelect" class="form-control">
-              <option value="1">Day 1</option>
-              <option value="2">Day 2</option>
-              <option value="all">Every Day</option>
-            </select>
-          </div>
-        </div>
-
-        <label class="form-label" for="eventLocationInput">Room / Location</label>
-        <input type="text" id="eventLocationInput" class="form-control" placeholder="e.g., Room 119" />
-
-        <button class="primary-action-btn" onclick="submitNewEvent()">Add to Schedule</button>
-      `;
-
-    openSheet(`
-      <div class="sheet-header">
-        <h3 class="sheet-title">${mode === "task" ? "New Task" : "New Calendar Event"}</h3>
-        <button class="sheet-close" onclick="closeSheet()">×</button>
-      </div>
-      <div class="segmented-bar">
-        <button class="segment-btn ${mode === "task" ? "active" : ""}" onclick="openNewSheet('task')">Task</button>
-        <button class="segment-btn ${mode === "event" ? "active" : ""}" onclick="openNewSheet('event')">Calendar Event</button>
-      </div>
-      ${bodyHTML}
-    `);
-  }
-
-  function submitNewTask() {
-    const classKey = document.getElementById("taskSubjectSelect").value;
-    const title = document.getElementById("taskTitleInput").value.trim();
-    if (!title) return;
-
-    state.tasks.unshift({
-      id: Date.now(),
-      classKey,
-      title,
-      completed: false
-    });
-    persistState();
-    closeSheet();
-    render();
-  }
-
-  function submitNewEvent() {
-    const title = document.getElementById("eventTitleInput").value.trim();
-    const time = document.getElementById("eventTimeInput").value.trim() || "3:15 PM";
-    const dayVal = document.getElementById("eventDaySelect").value;
-    const location = document.getElementById("eventLocationInput").value.trim();
-    if (!title) return;
-
-    state.customEvents.push({
-      id: Date.now(),
-      title,
-      time,
-      location,
-      day: dayVal === "all" ? "all" : Number(dayVal),
-      emoji: "📅"
-    });
-    persistState();
-    closeSheet();
-    switchView("schedule");
-  }
-
-  function openProfileSheet() {
-    const pillsHTML = Object.keys(masterSchedules).map(key => `
-      <button class="profile-pill-btn ${state.activeUser === key ? "active" : ""}" onclick="selectProfile('${key}')">
-        ${escapeHTML(masterSchedules[key].name)}
-      </button>
-    `).join("");
-
-    openSheet(`
-      <div class="sheet-header">
-        <h3 class="sheet-title">Profile & Settings</h3>
-        <button class="sheet-close" onclick="closeSheet()">×</button>
-      </div>
-
-      <label class="form-label">Active Student Profile</label>
-      <div class="profile-grid">${pillsHTML}</div>
-
-      <button class="menu-row-btn" onclick="toggleTheme(); openProfileSheet();">
-        <span>Theme</span>
-        <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark" : "Light"}</span>
-      </button>
-
-      <button class="primary-action-btn" style="margin-top: 6px;" onclick="openCompareSheet()">
-        Compare Schedules with Friends
-      </button>
-    `);
-  }
-
-  function selectProfile(key) {
-    state.activeUser = key;
-    persistState();
-    closeSheet();
-    render();
-  }
-
-  function openCompareSheet() {
-    const friendPills = Object.keys(masterSchedules).map(key => {
-      const selected = state.selectedFriends.includes(key);
-      return `
-        <button class="profile-pill-btn ${selected ? "active" : ""}" onclick="toggleCompareFriend('${key}')">
-          ${escapeHTML(masterSchedules[key].name)}
+      const chipsHTML = filterOptions.map(cat => `
+        <button type="button" class="chip-btn ${state.taskFilter === cat ? "active" : ""}" onclick="window.setTaskFilter('${escapeHTML(cat)}')">
+          ${escapeHTML(cat)}
         </button>
-      `;
-    }).join("");
+      `).join("");
 
-    let periodsHTML = "";
-    for (let p = 0; p < 4; p++) {
-      const subjectCounts = {};
-      state.selectedFriends.forEach(k => {
-        const s = masterSchedules[k];
-        if (s) {
-          const title = s.baseSchedule[p][state.compareSemester].title;
-          subjectCounts[title] = (subjectCounts[title] || 0) + 1;
+      const filteredTasks = state.taskFilter === "All"
+        ? state.tasks
+        : state.tasks.filter(t => t.classKey === state.taskFilter);
+
+      const listHTML = filteredTasks.length === 0
+        ? `<div class="avec-card" style="text-align: center; padding: 32px 20px; color: var(--text-muted);">
+            No tasks${state.taskFilter !== "All" ? ` for ${escapeHTML(state.taskFilter)}` : ""}. Tap <strong>+ New Task</strong> to add one.
+           </div>`
+        : filteredTasks.map(t => `
+            <div class="avec-card task-item-card">
+              <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                <button type="button" class="task-check-circle ${t.completed ? "checked" : ""}" onclick="window.toggleTask(${t.id})" aria-label="Toggle task complete">
+                  ${t.completed ? "✓" : ""}
+                </button>
+                <div style="min-width: 0; flex: 1;">
+                  <div class="task-item-text ${t.completed ? "completed" : ""}">${escapeHTML(t.title)}</div>
+                  <div class="task-item-tag">${escapeHTML(t.classKey)}${t.dueNote ? ` • ${escapeHTML(t.dueNote)}` : ""}</div>
+                </div>
+              </div>
+              <button type="button" class="delete-icon-btn" onclick="window.deleteTask(${t.id})" title="Delete task" aria-label="Delete task">×</button>
+            </div>
+          `).join("");
+
+      return `
+        <div class="section-header-row">
+          <h2 class="section-title">Tasks</h2>
+          <button type="button" class="chip-btn active" onclick="window.openNewSheet('task')">+ New Task</button>
+        </div>
+        <div class="filter-chips">${chipsHTML}</div>
+        <div class="card-stack">${listHTML}</div>
+      `;
+    }
+
+    /* ==========================================================================
+       SEARCH & 7-DAY BROWSER RENDERER
+       ========================================================================== */
+    function renderSearchHTML() {
+      const today = new Date();
+      let stripHTML = "";
+      for (let offset = 0; offset < 7; offset++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + offset);
+        const dayLabel = offset === 0 ? "Today" : d.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = d.getDate();
+        const cycleDay = ((state.currentDay - 1 + offset) % 2) + 1;
+        stripHTML += `
+          <div class="day-strip-item ${state.searchDayOffset === offset ? "active" : ""}" onclick="window.selectSearchDay(${offset})">
+            <div class="day-strip-name">${dayLabel}</div>
+            <div class="day-strip-num">${dayNum}</div>
+            <div class="day-strip-badge">Day ${cycleDay}</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="avec-card" style="padding: 12px 16px; margin-bottom: 12px;">
+          <input
+            type="text"
+            id="searchField"
+            class="form-control"
+            style="margin-bottom: 0;"
+            placeholder="Search tasks, classes, teachers, rooms, events..."
+            oninput="window.runSearchFilter()"
+          />
+        </div>
+        <div class="day-strip">${stripHTML}</div>
+        <div id="searchResultsContainer"></div>
+      `;
+    }
+
+    function runSearchFilter() {
+      const input = document.getElementById("searchField");
+      const container = document.getElementById("searchResultsContainer");
+      if (!container) return;
+
+      const query = (input ? input.value : "").trim().toLowerCase();
+      const previewDay = ((state.currentDay - 1 + state.searchDayOffset) % 2) + 1;
+      const previewDate = new Date();
+      previewDate.setDate(previewDate.getDate() + state.searchDayOffset);
+      const previewDateISO = getLocalDateISO(previewDate);
+
+      if (!query) {
+        container.innerHTML = `
+          <div class="section-header-row">
+            <h3 class="section-title" style="font-size: 0.94rem; color: var(--text-muted);">
+              Day ${previewDay} • ${formatFriendlyDate(previewDateISO)}
+            </h3>
+          </div>
+          ${renderScheduleHTML(previewDay, previewDateISO)}
+        `;
+        return;
+      }
+
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      const matches = [];
+
+      // Search Tasks
+      state.tasks.forEach(t => {
+        if (
+          t.title.toLowerCase().includes(query) ||
+          t.classKey.toLowerCase().includes(query) ||
+          (t.dueNote || "").toLowerCase().includes(query)
+        ) {
+          matches.push({
+            badge: `Task • ${t.classKey}`,
+            title: t.title,
+            sub: t.completed ? "Completed" : (t.dueNote || "Active Task")
+          });
         }
       });
 
-      const hasMatch = Object.values(subjectCounts).some(count => count > 1);
-      const rows = state.selectedFriends.map(k => {
-        const s = masterSchedules[k];
-        if (!s) return "";
-        const course = s.baseSchedule[p][state.compareSemester];
-        const isMatch = subjectCounts[course.title] > 1;
-        return `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: 10px; background: ${isMatch ? "var(--match-bg)" : "transparent"}; font-size: 0.86rem;">
-            <span style="font-weight: 600; width: 88px;">${escapeHTML(s.name)}</span>
-            <span style="flex: 1; text-align: center; font-weight: ${isMatch ? "700" : "500"}; color: ${isMatch ? "var(--match-text)" : "var(--text-primary)"};">${escapeHTML(course.title)}</span>
-            <span style="color: var(--text-muted); font-size: 0.78rem;">Rm ${escapeHTML(course.room)}</span>
+      // Search Classes
+      student.baseSchedule.forEach((period, idx) => {
+        ["s1", "s2"].forEach(sem => {
+          const c = period[sem];
+          if (
+            c.title.toLowerCase().includes(query) ||
+            c.teacher.toLowerCase().includes(query) ||
+            c.room.toLowerCase().includes(query)
+          ) {
+            matches.push({
+              badge: `Period ${idx + 1} (${sem.toUpperCase()})`,
+              title: c.title,
+              sub: `${c.teacher} | Room ${c.room}`
+            });
+          }
+        });
+      });
+
+      // Search Custom Events
+      state.customEvents.forEach(ev => {
+        const schedLabel = getEventScheduleLabel(ev);
+        if (
+          ev.title.toLowerCase().includes(query) ||
+          (ev.location || "").toLowerCase().includes(query) ||
+          schedLabel.toLowerCase().includes(query)
+        ) {
+          matches.push({
+            eventId: ev.id,
+            badge: `Event • ${ev.time} (${schedLabel})`,
+            title: ev.title,
+            sub: ev.location || "Calendar Event"
+          });
+        }
+      });
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="avec-card" style="text-align: center; padding: 28px; color: var(--text-muted);">
+            No matching tasks, classes, or events found.
           </div>
         `;
-      }).join("");
+        return;
+      }
 
-      periodsHTML += `
-        <div class="avec-card" style="padding: 14px 16px; margin-bottom: 10px; background: var(--card-nested);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">
-            <span>Period ${p + 1}</span>
-            ${hasMatch ? `<span style="color: var(--accent-green);">Shared Class</span>` : ""}
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 4px;">${rows}</div>
+      container.innerHTML = `
+        <div class="card-stack">
+          ${matches.map(m => `
+            <div class="avec-card" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+              <div style="min-width: 0; flex: 1;">
+                <div class="task-item-tag" style="margin-top: 0; margin-bottom: 3px;">${escapeHTML(m.badge)}</div>
+                <div class="class-name">${escapeHTML(m.title)}</div>
+                <div class="class-meta" style="margin-top: 3px; margin-left: 0;">${escapeHTML(m.sub)}</div>
+              </div>
+              ${m.eventId ? `<button type="button" class="delete-icon-btn" onclick="window.deleteCustomEvent(${m.eventId})" title="Remove event">×</button>` : ""}
+            </div>
+          `).join("")}
         </div>
       `;
     }
 
-    openSheet(`
-      <div class="sheet-header">
-        <h3 class="sheet-title">Compare Schedules</h3>
-        <button class="sheet-close" onclick="closeSheet()">×</button>
-      </div>
+    function render() {
+      state.viewingDateISO = getLocalDateISO(new Date());
+      updateChrome();
+      const main = document.getElementById("mainContent");
 
-      <div class="segmented-bar">
-        <button class="segment-btn ${state.compareSemester === "s1" ? "active" : ""}" onclick="state.compareSemester='s1'; openCompareSheet();">Semester 1</button>
-        <button class="segment-btn ${state.compareSemester === "s2" ? "active" : ""}" onclick="state.compareSemester='s2'; openCompareSheet();">Semester 2</button>
-      </div>
-
-      <label class="form-label">Select Students</label>
-      <div class="profile-grid">${friendPills}</div>
-      ${periodsHTML}
-    `);
-  }
-
-  function toggleCompareFriend(key) {
-    if (state.selectedFriends.includes(key)) {
-      if (state.selectedFriends.length > 1) {
-        state.selectedFriends = state.selectedFriends.filter(k => k !== key);
+      if (state.currentView === "schedule") {
+        main.innerHTML = renderScheduleHTML(state.currentDay, state.viewingDateISO);
+      } else if (state.currentView === "tasks") {
+        main.innerHTML = renderTasksHTML();
+      } else if (state.currentView === "search") {
+        main.innerHTML = renderSearchHTML();
+        runSearchFilter();
       }
-    } else {
-      state.selectedFriends.push(key);
     }
-    openCompareSheet();
-  }
 
-  function escapeHTML(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
+    /* ==========================================================================
+       BOTTOM SHEET HELPERS
+       ========================================================================== */
+    function openSheet(innerHTML) {
+      const sheet = document.getElementById("bottomSheet");
+      const backdrop = document.getElementById("sheetBackdrop");
+      sheet.innerHTML = `<div class="sheet-grabber"></div>${innerHTML}`;
+      backdrop.classList.add("open");
+      sheet.classList.add("open");
+    }
 
-  // Initialize on load
-  applyTheme(state.theme);
-  render();
+    function closeSheet() {
+      document.getElementById("sheetBackdrop").classList.remove("open");
+      document.getElementById("bottomSheet").classList.remove("open");
+    }
+
+    /* ==========================================================================
+       GLOBAL INTERACTION HANDLERS (Exposed on window for reliability)
+       ========================================================================== */
+    window.toggleDay = function () {
+      state.currentDay = state.currentDay === 1 ? 2 : 1;
+      render();
+    };
+
+    window.switchView = function (view) {
+      state.currentView = view;
+      closeSheet();
+      render();
+    };
+
+    window.toggleTheme = function () {
+      applyTheme(state.theme === "light" ? "dark" : "light");
+    };
+
+    window.toggleSemester = function () {
+      state.activeSemester = state.activeSemester === "s1" ? "s2" : "s1";
+      persistState();
+      render();
+    };
+
+    window.setTaskFilter = function (cat) {
+      state.taskFilter = cat;
+      render();
+    };
+
+    window.toggleTask = function (id) {
+      state.tasks = state.tasks.map(t => (t.id === id ? { ...t, completed: !t.completed } : t));
+      persistState();
+      render();
+    };
+
+    window.deleteTask = function (id) {
+      state.tasks = state.tasks.filter(t => t.id !== id);
+      persistState();
+      render();
+    };
+
+    window.deleteCustomEvent = function (id, refreshManageSheet = false) {
+      state.customEvents = state.customEvents.filter(ev => ev.id !== id);
+      persistState();
+      render();
+      if (refreshManageSheet) {
+        window.openManageEventsSheet();
+      }
+    };
+
+    window.selectSearchDay = function (offset) {
+      state.searchDayOffset = offset;
+      render();
+    };
+
+    window.runSearchFilter = runSearchFilter;
+    window.closeSheet = closeSheet;
+
+    /* ==========================================================================
+       MENU BAR SHEET
+       ========================================================================== */
+    window.openMenuSheet = function () {
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      openSheet(`
+        <div class="sheet-header">
+          <h3 class="sheet-title">Menu Bar</h3>
+          <button type="button" class="sheet-close" onclick="window.closeSheet()">×</button>
+        </div>
+
+        <button type="button" class="menu-row-btn" onclick="window.toggleTheme(); window.openMenuSheet();">
+          <span>Appearance</span>
+          <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
+        </button>
+
+        <button type="button" class="menu-row-btn" onclick="window.toggleSemester(); window.openMenuSheet();">
+          <span>Semester</span>
+          <span style="color: var(--accent-blue);">Semester ${state.activeSemester === "s1" ? "1" : "2"}</span>
+        </button>
+
+        <button type="button" class="menu-row-btn" onclick="window.openManageEventsSheet()">
+          <span>Manage Calendar Events (${state.customEvents.length})</span>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
+
+        <button type="button" class="menu-row-btn" onclick="window.openCompareSheet()">
+          <span>Compare Schedules</span>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
+
+        <button type="button" class="menu-row-btn" onclick="window.openProfileSheet()">
+          <span>Switch Profile (${escapeHTML(student.name)})</span>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
+      `);
+    };
+
+    window.openManageEventsSheet = function () {
+      const listHTML = state.customEvents.length === 0
+        ? `<div style="text-align: center; padding: 26px 12px; color: var(--text-muted); font-size: 0.92rem;">
+            No custom calendar events yet.
+           </div>`
+        : state.customEvents.map(ev => `
+            <div class="avec-card" style="padding: 13px 15px; margin-bottom: 10px; background: var(--card-nested); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 11px; min-width: 0; flex: 1;">
+                <div class="emoji-circle" style="background-color: #BAE6FD; margin-top: 0;">${escapeHTML(ev.emoji || "📅")}</div>
+                <div style="min-width: 0; flex: 1;">
+                  <div class="class-name" style="font-size: 0.96rem;">${escapeHTML(ev.title)}</div>
+                  <div class="class-meta" style="margin-left: 0; font-size: 0.8rem;">
+                    ${escapeHTML(ev.time)} • ${escapeHTML(getEventScheduleLabel(ev))}${ev.location ? ` • ${escapeHTML(ev.location)}` : ""}
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="delete-icon-btn" onclick="window.deleteCustomEvent(${ev.id}, true)" title="Remove event">×</button>
+            </div>
+          `).join("");
+
+      openSheet(`
+        <div class="sheet-header">
+          <h3 class="sheet-title">Calendar Events</h3>
+          <button type="button" class="sheet-close" onclick="window.closeSheet()">×</button>
+        </div>
+        ${listHTML}
+        <button type="button" class="primary-action-btn" style="margin-top: 6px;" onclick="window.openNewSheet('event')">
+          + New Calendar Event
+        </button>
+      `);
+    };
+
+    /* ==========================================================================
+       CREATE NEW MODAL (Task & Calendar Event)
+       ========================================================================== */
+    window.handleEventScheduleModeChange = function () {
+      const modeEl = document.getElementById("eventScheduleMode");
+      const dateWrapper = document.getElementById("specificDateWrapper");
+      if (modeEl && dateWrapper) {
+        dateWrapper.style.display = modeEl.value === "specific_date" ? "block" : "none";
+      }
+    };
+
+    window.openNewSheet = function (mode = "task") {
+      const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+      const todayISO = getLocalDateISO(new Date());
+      const classOptions = Array.from(
+        new Set(student.baseSchedule.map(p => p[state.activeSemester].title).concat(["General"]))
+      )
+        .map(subj => `<option value="${escapeHTML(subj)}">${escapeHTML(subj)}</option>`)
+        .join("");
+
+      const bodyHTML = mode === "task"
+        ? `
+          <label class="form-label" for="taskSubjectSelect">Class</label>
+          <select id="taskSubjectSelect" class="form-control">${classOptions}</select>
+
+          <label class="form-label" for="taskTitleInput">Task Description</label>
+          <input type="text" id="taskTitleInput" class="form-control" placeholder="e.g., Periodic Table test on April 1st." />
+
+          <label class="form-label" for="taskDueInput">Due Note (Optional)</label>
+          <input type="text" id="taskDueInput" class="form-control" placeholder="e.g., Due tomorrow" />
+
+          <button type="button" class="primary-action-btn" onclick="window.submitNewTask()">Save Task</button>
+        `
+        : `
+          <div style="display: grid; grid-template-columns: 84px 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" for="eventEmojiSelect">Icon</label>
+              <select id="eventEmojiSelect" class="form-control">
+                <option value="📅">📅</option>
+                <option value="🎉">🎉</option>
+                <option value="🏀">🏀</option>
+                <option value="🎵">🎵</option>
+                <option value="📝">📝</option>
+                <option value="🩺">🩺</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="eventTitleInput">Event Title</label>
+              <input type="text" id="eventTitleInput" class="form-control" placeholder="e.g., Robotics Club" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label class="form-label" for="eventTimeInput">Time</label>
+              <input type="time" id="eventTimeInput" class="form-control" value="15:15" />
+            </div>
+            <div>
+              <label class="form-label" for="eventScheduleMode">When</label>
+              <select id="eventScheduleMode" class="form-control" onchange="window.handleEventScheduleModeChange()">
+                <option value="today">Today Only</option>
+                <option value="specific_date">Specific Date</option>
+                <option value="day1">Repeats Day 1</option>
+                <option value="day2">Repeats Day 2</option>
+                <option value="all">Every Day</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="specificDateWrapper" style="display: none;">
+            <label class="form-label" for="eventDateInput">Select Date</label>
+            <input type="date" id="eventDateInput" class="form-control" value="${todayISO}" />
+          </div>
+
+          <label class="form-label" for="eventLocationInput">Room / Notes (Optional)</label>
+          <input type="text" id="eventLocationInput" class="form-control" placeholder="e.g., Room 119" />
+
+          <button type="button" class="primary-action-btn" onclick="window.submitNewEvent()">Add to Schedule</button>
+        `;
+
+      openSheet(`
+        <div class="sheet-header">
+          <h3 class="sheet-title">${mode === "task" ? "New Task" : "New Calendar Event"}</h3>
+          <button type="button" class="sheet-close" onclick="window.closeSheet()">×</button>
+        </div>
+        <div class="segmented-bar">
+          <button type="button" class="segment-btn ${mode === "task" ? "active" : ""}" onclick="window.openNewSheet('task')">New Task</button>
+          <button type="button" class="segment-btn ${mode === "event" ? "active" : ""}" onclick="window.openNewSheet('event')">Calendar Event</button>
+        </div>
+        ${bodyHTML}
+      `);
+    };
+
+    window.submitNewTask = function () {
+      const classKey = document.getElementById("taskSubjectSelect").value;
+      const titleInput = document.getElementById("taskTitleInput");
+      const dueInput = document.getElementById("taskDueInput");
+      const title = titleInput ? titleInput.value.trim() : "";
+      const dueNote = dueInput ? dueInput.value.trim() : "";
+      if (!title) {
+        if (titleInput) titleInput.focus();
+        return;
+      }
+
+      state.tasks.unshift({
+        id: Date.now(),
+        classKey,
+        title,
+        dueNote,
+        completed: false
+      });
+      persistState();
+      closeSheet();
+      render();
+    };
+
+    window.submitNewEvent = function () {
+      const titleInput = document.getElementById("eventTitleInput");
+      const title = titleInput ? titleInput.value.trim() : "";
+      if (!title) {
+        if (titleInput) titleInput.focus();
+        return;
+      }
+
+      const emoji = document.getElementById("eventEmojiSelect").value || "📅";
+      const rawTime = document.getElementById("eventTimeInput").value || "15:15";
+      const time = format24To12(rawTime);
+      const scheduleMode = document.getElementById("eventScheduleMode").value;
+      const pickedDate = document.getElementById("eventDateInput") ? document.getElementById("eventDateInput").value : "";
+      const location = document.getElementById("eventLocationInput").value.trim();
+
+      const newEvent = {
+        id: Date.now(),
+        title,
+        time,
+        location,
+        emoji
+      };
+
+      if (scheduleMode === "today") {
+        newEvent.repeatType = "date";
+        newEvent.date = getLocalDateISO(new Date());
+      } else if (scheduleMode === "specific_date") {
+        newEvent.repeatType = "date";
+        newEvent.date = pickedDate || getLocalDateISO(new Date());
+      } else if (scheduleMode === "day1") {
+        newEvent.repeatType = "cycle";
+        newEvent.day = 1;
+      } else if (scheduleMode === "day2") {
+        newEvent.repeatType = "cycle";
+        newEvent.day = 2;
+      } else {
+        newEvent.repeatType = "cycle";
+        newEvent.day = "all";
+      }
+
+      state.customEvents.push(newEvent);
+      persistState();
+      closeSheet();
+      state.currentView = "schedule";
+      render();
+    };
+
+    /* ==========================================================================
+       PROFILE & COMPARE SCHEDULES SHEETS
+       ========================================================================== */
+    window.openProfileSheet = function () {
+      const pillsHTML = Object.keys(masterSchedules).map(key => `
+        <button type="button" class="profile-pill-btn ${state.activeUser === key ? "active" : ""}" onclick="window.selectProfile('${key}')">
+          ${escapeHTML(masterSchedules[key].name)}
+        </button>
+      `).join("");
+
+      openSheet(`
+        <div class="sheet-header">
+          <h3 class="sheet-title">Profile & Settings</h3>
+          <button type="button" class="sheet-close" onclick="window.closeSheet()">×</button>
+        </div>
+
+        <label class="form-label">Active Student Profile</label>
+        <div class="profile-grid">${pillsHTML}</div>
+
+        <button type="button" class="menu-row-btn" onclick="window.toggleTheme(); window.openProfileSheet();">
+          <span>Theme</span>
+          <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
+        </button>
+
+        <button type="button" class="primary-action-btn" style="margin-top: 6px;" onclick="window.openCompareSheet()">
+          Compare Schedules with Friends
+        </button>
+      `);
+    };
+
+    window.selectProfile = function (key) {
+      state.activeUser = key;
+      persistState();
+      closeSheet();
+      render();
+    };
+
+    window.openCompareSheet = function () {
+      const friendPills = Object.keys(masterSchedules).map(key => {
+        const selected = state.selectedFriends.includes(key);
+        return `
+          <button type="button" class="profile-pill-btn ${selected ? "active" : ""}" onclick="window.toggleCompareFriend('${key}')">
+            ${escapeHTML(masterSchedules[key].name)}
+          </button>
+        `;
+      }).join("");
+
+      let periodsHTML = "";
+      for (let p = 0; p < 4; p++) {
+        const subjectCounts = {};
+        state.selectedFriends.forEach(k => {
+          const s = masterSchedules[k];
+          if (s) {
+            const title = s.baseSchedule[p][state.compareSemester].title;
+            subjectCounts[title] = (subjectCounts[title] || 0) + 1;
+          }
+        });
+
+        const hasMatch = Object.values(subjectCounts).some(count => count > 1);
+        const rows = state.selectedFriends.map(k => {
+          const s = masterSchedules[k];
+          if (!s) return "";
+          const course = s.baseSchedule[p][state.compareSemester];
+          const isMatch = subjectCounts[course.title] > 1;
+          return `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: 10px; background: ${isMatch ? "var(--match-bg)" : "transparent"}; font-size: 0.86rem;">
+              <span style="font-weight: 600; width: 88px;">${escapeHTML(s.name)}</span>
+              <span style="flex: 1; text-align: center; font-weight: ${isMatch ? "700" : "500"}; color: ${isMatch ? "var(--match-text)" : "var(--text-primary)"};">${escapeHTML(course.title)}</span>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Rm ${escapeHTML(course.room)}</span>
+            </div>
+          `;
+        }).join("");
+
+        periodsHTML += `
+          <div class="avec-card" style="padding: 14px 16px; margin-bottom: 10px; background: var(--card-nested);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">
+              <span>Period ${p + 1}</span>
+              ${hasMatch ? `<span style="color: var(--accent-green);">Shared Class</span>` : ""}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">${rows}</div>
+          </div>
+        `;
+      }
+
+      openSheet(`
+        <div class="sheet-header">
+          <h3 class="sheet-title">Compare Schedules</h3>
+          <button type="button" class="sheet-close" onclick="window.closeSheet()">×</button>
+        </div>
+
+        <div class="segmented-bar">
+          <button type="button" class="segment-btn ${state.compareSemester === "s1" ? "active" : ""}" onclick="window.setCompareSem('s1')">Semester 1</button>
+          <button type="button" class="segment-btn ${state.compareSemester === "s2" ? "active" : ""}" onclick="window.setCompareSem('s2')">Semester 2</button>
+        </div>
+
+        <label class="form-label">Select Students</label>
+        <div class="profile-grid">${friendPills}</div>
+        ${periodsHTML}
+      `);
+    };
+
+    window.setCompareSem = function (sem) {
+      state.compareSemester = sem;
+      window.openCompareSheet();
+    };
+
+    window.toggleCompareFriend = function (key) {
+      if (state.selectedFriends.includes(key)) {
+        if (state.selectedFriends.length > 1) {
+          state.selectedFriends = state.selectedFriends.filter(k => k !== key);
+        }
+      } else {
+        state.selectedFriends.push(key);
+      }
+      window.openCompareSheet();
+    };
+
+    /* ==========================================================================
+       INITIALIZE APP
+       ========================================================================== */
+    applyTheme(state.theme);
+    render();
+  })();
 </script>
 </body>
 </html>
