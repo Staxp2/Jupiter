@@ -1,687 +1,1500 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Jupiter</title>
-  <link rel="apple-touch-icon" href="jupiterappicon.png" />
-  <link rel="icon" type="image/png" href="jupiterappicon.png" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#F4F3EF" id="metaThemeColor" />
   <style>
-    :root {
-      --bg-black: #000000;
-      --text-white: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.6);
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: 1px solid rgba(255, 255, 255, 0.12);
-      --glass-blur: blur(20px) saturate(180%);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    /* ==========================================================================
+       DESIGN TOKENS & THEME VARIABLES (Light & Dark Modes)
+       ========================================================================== */
+    :root[data-theme="light"] {
+      --bg-canvas: #F4F3EF;
+      --card-surface: #FFFFFF;
+      --card-nested: #F7F6F2;
+      --card-border: rgba(0, 0, 0, 0.05);
+      --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.035);
+      --text-primary: #111111;
+      --text-secondary: #3A3A3C;
+      --text-muted: #8E8E93;
+      --dock-surface: rgba(255, 255, 255, 0.88);
+      --dock-border: rgba(0, 0, 0, 0.07);
+      --dock-active-pill: #EFECE6;
+      --dock-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --sheet-bg: #FFFFFF;
+      --input-bg: #F4F3EF;
+      --accent-blue: #007AFF;
+      --accent-green: #28A745;
+      --accent-amber: #F59E0B;
+      --match-bg: rgba(40, 167, 69, 0.1);
+      --match-text: #1E7E34;
     }
+
+    :root[data-theme="dark"] {
+      --bg-canvas: #000000;
+      --card-surface: #1C1C1E;
+      --card-nested: #2C2C2E;
+      --card-border: rgba(255, 255, 255, 0.09);
+      --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+      --text-primary: #FFFFFF;
+      --text-secondary: #D1D1D6;
+      --text-muted: #8E8E93;
+      --dock-surface: rgba(28, 28, 30, 0.88);
+      --dock-border: rgba(255, 255, 255, 0.12);
+      --dock-active-pill: #3A3A3C;
+      --dock-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+      --sheet-bg: #1C1C1E;
+      --input-bg: #2C2C2E;
+      --accent-blue: #5E9EFF;
+      --accent-green: #32D74B;
+      --accent-amber: #FBBF24;
+      --match-bg: rgba(50, 215, 75, 0.14);
+      --match-text: #32D74B;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-black);
-      color: var(--text-white);
-      padding: 24px;
+      padding: 24px 16px 120px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
       display: flex;
       justify-content: center;
+      min-height: 100vh;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      -webkit-font-smoothing: antialiased;
     }
-    .container { width: 100%; max-width: 480px; }
-    
-    header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
 
-    /* Circular Hamburger Menu Button */
-    .menu-btn {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      border-radius: 50%;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: var(--glass-border);
-      color: var(--text-white);
+    .app-shell {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    /* ==========================================================================
+       TOP HEADER (Clean Greeting + Day Pill Only)
+       ========================================================================== */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 4px 4px 0 4px;
+      gap: 12px;
+    }
+
+    .greeting-heading {
+      margin: 0;
+      font-size: 1.42rem;
+      font-weight: 700;
+      letter-spacing: -0.45px;
+      color: var(--text-primary);
+      cursor: pointer;
+      line-height: 1.2;
+    }
+
+    .day-pill {
+      background: var(--card-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s ease, background-color 0.25s ease;
+      user-select: none;
+    }
+
+    .day-pill:active {
+      transform: scale(0.95);
+    }
+
+    /* ==========================================================================
+       CARDS & SCHEDULE STACK
+       ========================================================================== */
+    .card-stack {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      cursor: pointer;
-      box-shadow: var(--glass-shadow);
-      transition: background 0.2s;
-    }
-    .menu-btn:hover { background: rgba(255, 255, 255, 0.1); }
-    .menu-bar { width: 16px; height: 2px; background: var(--text-white); border-radius: 2px; }
-
-    /* Slide-out Sidebar Drawer */
-    .sidebar-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
-      z-index: 100; opacity: 0; visibility: hidden; transition: all 0.3s ease;
-    }
-    .sidebar-overlay.open { opacity: 1; visibility: visible; }
-    
-    .sidebar {
-      position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-      background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(25px);
-      border-right: var(--glass-border); z-index: 101;
-      padding: 24px; box-sizing: border-box; transition: left 0.3s ease;
-      display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .sidebar-content { display: flex; flex-direction: column; gap: 12px; }
-    .sidebar.open { left: 0; }
-    .sidebar h3 { margin: 0 0 10px 0; font-size: 1.1rem; border-bottom: var(--glass-border); padding-bottom: 12px; }
-    .sidebar-item {
-      background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
-      padding: 12px 16px; border-radius: 12px; color: var(--text-white);
-      text-align: left; font-size: 0.95rem; font-weight: 500; cursor: pointer;
-      display: flex; align-items: center; gap: 12px;
-      transition: background 0.2s;
-    }
-    .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
-    .sidebar-icon { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .sidebar-footer { font-size: 0.8rem; color: var(--text-muted); text-align: center; padding-top: 16px; border-top: var(--glass-border); }
-
-    .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: var(--glass-border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: var(--glass-shadow);
-      margin-bottom: 16px;
-    }
-    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
-    select {
-      width: 100%; padding: 14px 16px; border-radius: 12px; border: var(--glass-border);
-      background: #111827; color: var(--text-white); font-size: 1rem; outline: none; cursor: pointer; margin-bottom: 16px; box-sizing: border-box;
-    }
-    .primary-btn {
-      width: 100%; padding: 14px; background: #ffffff; color: #000000; border: none;
-      border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
-    }
-    .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .day-toggle { display: flex; gap: 8px; }
-    .day-btn {
-      flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
-      border-radius: 10px; color: var(--text-muted); font-weight: 600; cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .day-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
-    .schedule-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; border-bottom: var(--glass-border); padding-bottom: 12px; }
-    .schedule-header h2 { font-size: 1.25rem; margin: 0; font-weight: 500; }
-    .period-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-    .period-row:last-child { border-bottom: none; }
-    .period-time { font-size: 0.8rem; color: var(--text-muted); }
-    .period-subject { font-weight: 500; font-size: 1.05rem; margin-top: 2px; }
-    .period-meta { font-size: 0.85rem; color: var(--text-muted); text-align: right; }
-    .room-badge { background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 500; }
-    .assembly-badge { background: rgba(255, 255, 255, 0.2); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
-
-    /* Lit-up Student Selection Cards */
-    .student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; max-height: 260px; overflow-y: auto; }
-    .student-card {
-      background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
-      padding: 12px 14px; border-radius: 12px; color: var(--text-muted);
-      font-size: 0.95rem; font-weight: 500; text-align: center; cursor: pointer;
-      transition: all 0.2s ease; user-select: none;
-    }
-    .student-card:hover { background: rgba(255, 255, 255, 0.08); }
-    .student-card.active {
-      background: #ffffff; color: #000000; border-color: #ffffff; font-weight: 600;
-      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+      gap: 11px;
     }
 
-    /* Comparator & Match Indicators */
-    .compare-grid { display: flex; flex-direction: column; gap: 16px; }
-    .compare-period-card { background: rgba(255,255,255,0.03); border: var(--glass-border); border-radius: 14px; padding: 14px; }
-    .compare-period-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .compare-student-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9rem; border-radius: 6px; }
-    .compare-student-row:last-child { border-bottom: none; }
-    .match-row { background: rgba(255, 255, 255, 0.08); }
-    .match-pill {
-      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
-      background: #ffffff; color: #000000; padding: 2px 8px; border-radius: 12px;
-      letter-spacing: 0.5px;
+    .avec-card {
+      background: var(--card-surface);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 16px 18px;
+      box-shadow: var(--card-shadow);
+      transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
     }
 
-    /* Home Screen Install Guide */
-    .install-step {
+    /* Standard Class Card Layout */
+    .class-row {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 12px;
+      gap: 13px;
     }
-    .step-num {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+
+    /* Single-line Lunch Card Layout */
+    .class-row.single-line {
+      align-items: center;
+    }
+
+    .emoji-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .class-row.single-line .emoji-circle {
+      margin-top: 0;
+    }
+
+    .class-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .class-top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .class-row.single-line .class-top-line {
+      align-items: center;
+    }
+
+    .class-name {
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      color: var(--text-primary);
+    }
+
+    .class-time {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .class-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    .class-tasks-preview {
+      margin-top: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .class-task-line {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       FLOATING MULTI-PART BOTTOM BAR (Matching Avec Mockups)
+       ========================================================================== */
+    .bottom-dock-wrapper {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 28px);
+      max-width: 406px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    /* Left Group Pill: Schedule, Tasks, Menu Bar */
+    .dock-pill-group {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      background: var(--dock-surface);
+      backdrop-filter: blur(26px) saturate(180%);
+      -webkit-backdrop-filter: blur(26px) saturate(180%);
+      border: 1px solid var(--dock-border);
+      box-shadow: var(--dock-shadow);
+      border-radius: 999px;
+      padding: 5px 6px;
+      gap: 4px;
+      flex: 1;
+      justify-content: space-around;
+    }
+
+    .dock-group-btn {
+      position: relative;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      width: 46px;
+      height: 42px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+    }
+
+    .dock-group-btn.active {
+      background: var(--dock-active-pill);
+      color: var(--text-primary);
+    }
+
+    .dock-group-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Amber notification dot on Tasks icon */
+    .task-notif-dot {
+      position: absolute;
+      top: 9px;
+      right: 11px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--accent-amber);
+      border: 1.5px solid var(--card-surface);
+    }
+
+    /* Right Standalone Circular Floating Buttons */
+    .dock-circle-btn {
+      pointer-events: auto;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid var(--dock-border);
+      background: var(--dock-surface);
+      backdrop-filter: blur(26px) saturate(180%);
+      -webkit-backdrop-filter: blur(26px) saturate(180%);
+      box-shadow: var(--dock-shadow);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease, transform 0.12s ease;
+    }
+
+    .dock-circle-btn.active {
+      background: var(--dock-active-pill);
+    }
+
+    .dock-circle-btn:active {
+      transform: scale(0.92);
+    }
+
+    .profile-avatar-ring {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+      color: #FFFFFF;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.3px;
+    }
+
+    /* ==========================================================================
+       TASKS, SEARCH & SECONDARY VIEWS
+       ========================================================================== */
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+
+    .chip-btn {
+      background: var(--card-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn.active {
+      background: var(--text-primary);
+      color: var(--bg-canvas);
+      border-color: var(--text-primary);
+    }
+
+    .task-item-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .task-check-circle {
       width: 22px;
       height: 22px;
       border-radius: 50%;
+      border: 2px solid var(--text-muted);
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 600;
+      cursor: pointer;
       flex-shrink: 0;
+      color: transparent;
+      transition: all 0.15s ease;
+    }
+
+    .task-check-circle.checked {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #FFFFFF;
+    }
+
+    .task-item-text {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .task-item-text.completed {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-item-tag {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-top: 2px;
+    }
+
+    .delete-icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    /* Day Browser Strip in Search View */
+    .day-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .day-strip-item {
+      background: var(--card-surface);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .day-strip-item.active {
+      background: var(--text-primary);
+      color: var(--bg-canvas);
+      border-color: var(--text-primary);
+    }
+
+    .day-strip-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .day-strip-num {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .day-strip-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      margin-top: 2px;
+      opacity: 0.85;
+    }
+
+    /* ==========================================================================
+       BOTTOM SHEETS & MODALS
+       ========================================================================== */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .sheet-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      left: 50%;
+      bottom: -100%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 440px;
+      background: var(--sheet-bg);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      border-top: 1px solid var(--card-border);
+      padding: 14px 20px 36px 20px;
+      z-index: 201;
+      max-height: 86vh;
+      overflow-y: auto;
+      transition: bottom 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .bottom-sheet.open {
+      bottom: 0;
+    }
+
+    .sheet-grabber {
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--text-muted);
+      opacity: 0.35;
+      margin: 0 auto 14px auto;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .sheet-title {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .sheet-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card-nested);
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Form Controls inside Sheets */
+    .form-label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: var(--input-bg);
+      color: var(--text-primary);
+      font-size: 0.96rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 14px;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .primary-action-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 15px;
+      border: none;
+      background: var(--text-primary);
+      color: var(--bg-canvas);
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.2s ease;
+    }
+
+    .primary-action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .menu-row-btn {
+      width: 100%;
+      background: var(--card-nested);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .profile-pill-btn {
+      background: var(--card-nested);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .profile-pill-btn.active {
+      background: var(--text-primary);
+      color: var(--bg-canvas);
+      border-color: var(--text-primary);
+    }
+
+    .segmented-bar {
+      display: flex;
+      background: var(--card-nested);
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      gap: 4px;
+    }
+
+    .segment-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 9px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .segment-btn.active {
+      background: var(--card-surface);
+      color: var(--text-primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
   </style>
 </head>
 <body>
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-content">
-    <h3>Menu</h3>
-    <button class="sidebar-item" onclick="switchView('schedule')">
-      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-      My Schedule
-    </button>
-    <button class="sidebar-item" onclick="switchView('compare')">
-      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-      Compare Schedules
-    </button>
-    <button class="sidebar-item" onclick="showOnboarding()">
-      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-      Switch Profile
-    </button>
-  </div>
-  <div class="sidebar-footer">Jupiter v1.0</div>
-</div>
-
-<div class="container">
-  <header>
-    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
-      <div class="menu-bar"></div>
-      <div class="menu-bar"></div>
-    </button>
-    <h1>Jupiter</h1>
+<div class="app-shell">
+  <!-- Clean Top Header (Greeting + Day Pill Only) -->
+  <header class="top-header">
+    <h1 class="greeting-heading" id="greetingHeading" onclick="openProfileSheet()">Good morning, Christos.</h1>
+    <button class="day-pill" id="dayPillBtn" onclick="toggleDay()">Day 1</button>
   </header>
 
-  <!-- Onboarding Screen (Step 1: Install Instructions) -->
-  <div id="installGuideCard" class="glass-card" style="display: none;">
-    <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Welcome to Jupiter</h2>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">For the best experience, add Jupiter to your Home Screen first, then open it from there.</p>
-    
-    <div class="install-step">
-      <div class="step-num">1</div>
-      <div>Open your browser's menu (tap the share or menu icon).</div>
-    </div>
-    <div class="install-step">
-      <div class="step-num">2</div>
-      <div>Tap <strong>Add to Home Screen</strong> or <strong>Install App</strong>.</div>
-    </div>
-    <div class="install-step" style="margin-bottom: 20px;">
-      <div class="step-num">3</div>
-      <div>Open the app from your Home Screen to continue!</div>
-    </div>
-
-    <button class="primary-btn" onclick="showProfileStep()">Continue</button>
-  </div>
-
-  <!-- Onboarding Screen (Step 2: Profile Selection) -->
-  <div id="onboardingCard" class="glass-card" style="display: none;">
-    <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Select Profile</h2>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Choose your name to load your schedule.</p>
-    <label for="studentSelect">Who are you?</label>
-    <select id="studentSelect" onchange="handleSelectChange()"></select>
-    <button id="getStartedBtn" class="primary-btn" onclick="saveProfileAndStart()" disabled>Get Started</button>
-  </div>
-
-  <!-- Main App View -->
-  <div id="mainViewContainer" style="display: none;"></div>
+  <!-- Main Content Area -->
+  <main id="mainContent"></main>
 </div>
 
-<script>
-  let currentDay = 1;
-  let isAssemblyDay = false;
-  let activeUser = localStorage.getItem('jupiter_user_profile');
-  let currentView = 'schedule';
-  let compareSemester = 's1';
-  let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"];
+<!-- Exact Multi-Part Floating Bottom Dock -->
+<nav class="bottom-dock-wrapper" aria-label="Primary Navigation">
+  <!-- Left Pill Group (Schedule, Tasks, Menu Bar) -->
+  <div class="dock-pill-group">
+    <button class="dock-group-btn active" id="navSchedule" onclick="switchView('schedule')" title="Schedule">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="4" y="4" width="16" height="4" rx="1.5"></rect>
+        <rect x="4" y="10" width="16" height="4" rx="1.5"></rect>
+        <rect x="4" y="16" width="16" height="4" rx="1.5"></rect>
+      </svg>
+    </button>
 
-  const masterSchedules = {
-    "aaliyah": {
-      name: "Aaliyah",
-      baseSchedule: [
-        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
-        { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
-        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
-      ]
+    <button class="dock-group-btn" id="navTasks" onclick="switchView('tasks')" title="Tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"></circle>
+        <polyline points="12 7 12 12 15 14"></polyline>
+      </svg>
+      <span class="task-notif-dot" id="taskNotifDot"></span>
+    </button>
+
+    <button class="dock-group-btn" id="navMenu" onclick="openMenuSheet()" title="Menu Bar">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="7 9 12 4 17 9"></polyline>
+        <polyline points="7 15 12 20 17 15"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Standalone Circular Button 1: New Task / Event -->
+  <button class="dock-circle-btn" id="navNew" onclick="openNewSheet('task')" title="New Task or Event">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+    </svg>
+  </button>
+
+  <!-- Standalone Circular Button 2: Search & Other Days -->
+  <button class="dock-circle-btn" id="navSearch" onclick="switchView('search')" title="Search & Calendar Days">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7.5"></circle>
+      <line x1="20.5" y1="20.5" x2="16.35" y2="16.35"></line>
+    </svg>
+  </button>
+
+  <!-- Standalone Circular Button 3: Profile & Compare -->
+  <button class="dock-circle-btn" id="navProfile" onclick="openProfileSheet()" title="Profile & Compare">
+    <div class="profile-avatar-ring" id="dockProfileInitials">CH</div>
+  </button>
+</nav>
+
+<!-- Bottom Sheet Backdrop & Container -->
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="bottomSheet" onclick="event.stopPropagation()"></div>
+
+<script>
+  /* ==========================================================================
+     SAFE STORAGE HELPER
+     ========================================================================== */
+  const safeStorage = {
+    get(key, fallback) {
+      try {
+        const val = localStorage.getItem(key);
+        return val !== null ? val : fallback;
+      } catch (e) {
+        return fallback;
+      }
     },
-    "caleb": {
-      name: "Caleb",
-      baseSchedule: [
-        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } },
-        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
-      ]
-    },
-    "christos": {
-      name: "Christos",
-      baseSchedule: [
-        { s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
-        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
-      ]
-    },
-    "christopher": {
-      name: "Christopher",
-      baseSchedule: [
-        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
-        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
-        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }
-      ]
-    },
-    "imraan": {
-      name: "Imraan",
-      baseSchedule: [
-        { s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } },
-        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }
-      ]
-    },
-    "leah": {
-      name: "Leah",
-      baseSchedule: [
-        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
-        { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } },
-        { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
-        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }
-      ]
-    },
-    "mahrus": {
-      name: "Mahrus",
-      baseSchedule: [
-        { s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
-        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } },
-        { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }
-      ]
-    },
-    "marwa": {
-      name: "Marwa",
-      baseSchedule: [
-        { s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
-        { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
-        { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } },
-        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
-      ]
-    },
-    "michelle": {
-      name: "Michelle",
-      baseSchedule: [
-        { s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } },
-        { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } },
-        { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
-      ]
-    },
-    "moshe": {
-      name: "Moshe",
-      baseSchedule: [
-        { s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
-        { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
-        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
-        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
-      ]
-    },
-    "robin": {
-      name: "Robin",
-      baseSchedule: [
-        { s1: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
-        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
-        { s1: { title: "Science", room: "322", teacher: "Ryan Marrast" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } },
-        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
-      ]
-    },
-    "stella": {
-      name: "Stella",
-      baseSchedule: [
-        { s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } },
-        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } },
-        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } },
-        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }
-      ]
+    set(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {
+        // Ignore storage errors in restricted environments
+      }
     }
   };
 
-  const regularTimes = [
-    { slot: "Period 1", time: "9:00 AM - 10:20 AM" },
-    { slot: "Period 2", time: "10:25 AM - 11:40 AM" },
-    { slot: "Period 3", time: "12:40 PM - 1:55 PM" },
-    { slot: "Period 4", time: "2:00 PM - 3:15 PM" }
+  /* ==========================================================================
+     MASTER SCHEDULES & SUBJECT METADATA
+     ========================================================================== */
+  const masterSchedules = {
+    "aaliyah": { name: "Aaliyah", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
+    "caleb": { name: "Caleb", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+    "christos": { name: "Christos", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
+    "christopher": { name: "Christopher", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }] },
+    "imraan": { name: "Imraan", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "311", teacher: "Sylvia Kirkley" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }] },
+    "leah": { name: "Leah", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "318", teacher: "Ariana Ramlochan" } }, { s1: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
+    "mahrus": { name: "Mahrus", baseSchedule: [{ s1: { title: "French", room: "101", teacher: "Chris Ujimoto" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Computer Technology", room: "119", teacher: "Wei Qin" } }, { s1: { title: "Gym", room: "GYM 1", teacher: "Amit Latchmiah" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }] },
+    "marwa": { name: "Marwa", baseSchedule: [{ s1: { title: "Math", room: "307", teacher: "Darin Gloster" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "Geography", room: "214", teacher: "Lucia Domingues" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "320", teacher: "Ryan Marrast" }, s2: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
+    "michelle": { name: "Michelle", baseSchedule: [{ s1: { title: "Music", room: "222", teacher: "Lauren Simmons" }, s2: { title: "Geography", room: "117A", teacher: "Robert Cooper" } }, { s1: { title: "Science", room: "310", teacher: "Cecily Osborne" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }] },
+    "moshe": { name: "Moshe", baseSchedule: [{ s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+    "robin": { name: "Robin", baseSchedule: [{ s1: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } }, { s1: { title: "Science", room: "322", teacher: "Ryan Marrast" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
+    "stella": { name: "Stella", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }] }
+  };
+
+  const subjectMeta = {
+    "Science": { emoji: "🧪", bg: "#86EFAC" },
+    "Geography": { emoji: "🌍", bg: "#FDE047" },
+    "Lunch": { emoji: "🍔", bg: "#38BDF8" },
+    "Math": { emoji: "🔢", bg: "#A5B4FC" },
+    "French": { emoji: "🇫🇷", bg: "#93C5FD" },
+    "English": { emoji: "📚", bg: "#FDBA74" },
+    "Drama": { emoji: "🎭", bg: "#F9A8D4" },
+    "Gym": { emoji: "⚽", bg: "#6EE7B7" },
+    "Computer Technology": { emoji: "💻", bg: "#CBD5E1" },
+    "Communications Technology": { emoji: "🖥️", bg: "#C4B5FD" },
+    "Family Studies": { emoji: "🍳", bg: "#FCD34D" },
+    "Visual Arts": { emoji: "🎨", bg: "#FDA4AF" },
+    "Music": { emoji: "🎵", bg: "#D8B4FE" }
+  };
+
+  const regularBellTimes = [
+    { type: "class", periodIdx: 0, time: "9:00 AM", sortMinutes: 540 },
+    { type: "class", periodIdx: 1, time: "10:25 AM", sortMinutes: 625 },
+    { type: "lunch", time: "11:40 AM", sortMinutes: 700 },
+    { type: "class", periodIdx: 2, time: "12:40 PM", sortMinutes: 760 },
+    { type: "class", periodIdx: 3, time: "2:00 PM", sortMinutes: 840 }
   ];
 
-  function getAssemblyTimes() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    let academicYear = year;
-    if (month < 7) { academicYear = year - 1; }
+  const assemblyBellTimes = [
+    { type: "class", periodIdx: 0, time: "9:00 AM", sortMinutes: 540 },
+    { type: "assembly", time: "10:10 AM", sortMinutes: 610 },
+    { type: "class", periodIdx: 1, time: "11:15 AM", sortMinutes: 675 },
+    { type: "lunch", time: "12:15 PM", sortMinutes: 735 },
+    { type: "class", periodIdx: 2, time: "1:15 PM", sortMinutes: 795 },
+    { type: "class", periodIdx: 3, time: "2:15 PM", sortMinutes: 855 }
+  ];
 
-    let assemblyTimeRange = "10:10 AM - 11:10 AM"; 
-    if (academicYear >= 2028) {
-      assemblyTimeRange = "11:10 AM - 12:10 PM";
-    }
-
-    return [
-      { slot: "Period 1", time: "9:00 AM - 10:05 AM" },
-      { slot: "Period 2", time: assemblyTimeRange },
-      { slot: "Assembly", time: assemblyTimeRange, isAssemblyRow: true },
-      { slot: "Period 3", time: "1:10 PM - 2:10 PM" },
-      { slot: "Period 4", time: "2:15 PM - 3:15 PM" }
-    ];
-  }
-
-  function buildSelectOptions() {
-    const select = document.getElementById('studentSelect');
-    select.innerHTML = '<option value="" disabled selected>-- Choose your name --</option>';
-    for (const key in masterSchedules) {
-      if (masterSchedules.hasOwnProperty(key)) {
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.textContent = masterSchedules[key].name;
-        select.appendChild(opt);
+  /* ==========================================================================
+     APPLICATION STATE
+     ========================================================================== */
+  let state = {
+    theme: safeStorage.get("jupiter_theme", "light"),
+    activeUser: safeStorage.get("jupiter_user", "christos"),
+    currentDay: 1,
+    activeSemester: safeStorage.get("jupiter_semester", "s1"),
+    isAssembly: safeStorage.get("jupiter_assembly", "false") === "true",
+    currentView: "schedule", // 'schedule' | 'tasks' | 'search'
+    taskFilter: "All",
+    searchDayOffset: 0,
+    compareSemester: "s1",
+    selectedFriends: ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"],
+    tasks: (() => {
+      try {
+        const raw = safeStorage.get("jupiter_tasks_v3", null);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
       }
-    }
-    document.getElementById('getStartedBtn').disabled = true;
+    })(),
+    customEvents: (() => {
+      try {
+        const raw = safeStorage.get("jupiter_events_v2", null);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    })()
+  };
+
+  function persistState() {
+    safeStorage.set("jupiter_theme", state.theme);
+    safeStorage.set("jupiter_user", state.activeUser);
+    safeStorage.set("jupiter_semester", state.activeSemester);
+    safeStorage.set("jupiter_assembly", String(state.isAssembly));
+    safeStorage.set("jupiter_tasks_v3", JSON.stringify(state.tasks));
+    safeStorage.set("jupiter_events_v2", JSON.stringify(state.customEvents));
   }
 
-  function handleSelectChange() {
-    const selectEl = document.getElementById('studentSelect');
-    document.getElementById('getStartedBtn').disabled = !selectEl.value;
+  /* ==========================================================================
+     THEME & HEADER SYNC
+     ========================================================================== */
+  function applyTheme(theme) {
+    state.theme = theme;
+    document.documentElement.setAttribute("data-theme", theme);
+    const meta = document.getElementById("metaThemeColor");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#000000" : "#F4F3EF");
+    persistState();
   }
 
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay').classList.toggle('open');
+  function toggleTheme() {
+    applyTheme(state.theme === "light" ? "dark" : "light");
+  }
+
+  function toggleDay() {
+    state.currentDay = state.currentDay === 1 ? 2 : 1;
+    render();
   }
 
   function switchView(view) {
-    currentView = view;
-    toggleSidebar();
-    renderApp();
+    state.currentView = view;
+    render();
   }
 
-  function setCompareSemester(sem) {
-    compareSemester = sem;
-    renderApp();
+  function parseTimeToMinutes(timeStr) {
+    if (!timeStr) return 900;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!match) return 900;
+    let hrs = parseInt(match[1], 10);
+    const mins = parseInt(match[2], 10);
+    const period = (match[3] || "").toUpperCase();
+    if (period === "PM" && hrs !== 12) hrs += 12;
+    if (period === "AM" && hrs === 12) hrs = 0;
+    return hrs * 60 + mins;
   }
 
-  function toggleCompareUser(key) {
-    if (selectedCompareUsers.includes(key)) {
-      if (selectedCompareUsers.length > 1) {
-        selectedCompareUsers = selectedCompareUsers.filter(u => u !== key);
-      }
-    } else {
-      selectedCompareUsers.push(key);
-    }
-    renderApp();
+  function updateChrome() {
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    document.getElementById("greetingHeading").textContent = `Good morning, ${student.name}.`;
+    document.getElementById("dayPillBtn").textContent = `Day ${state.currentDay}`;
+    document.getElementById("dockProfileInitials").textContent = student.name.slice(0, 2).toUpperCase();
+
+    // Update Dock Active Indicators
+    document.getElementById("navSchedule").classList.toggle("active", state.currentView === "schedule");
+    document.getElementById("navTasks").classList.toggle("active", state.currentView === "tasks");
+    document.getElementById("navSearch").classList.toggle("active", state.currentView === "search");
+
+    // Update Tasks notification dot visibility
+    const hasOpenTasks = state.tasks.some(t => !t.completed);
+    document.getElementById("taskNotifDot").style.display = hasOpenTasks ? "block" : "none";
   }
 
-  function checkSpecialSchedule() {
-    const today = new Date();
-    if (today.getFullYear() === 2026 && today.getMonth() === 10 && today.getDate() === 11) {
-      isAssemblyDay = true;
-    } else {
-      isAssemblyDay = false;
-    }
-    currentDay = (today.getDate() % 2 !== 0) ? 1 : 2;
-  }
+  /* ==========================================================================
+     MAIN RENDERER
+     ========================================================================== */
+  function render() {
+    updateChrome();
+    const main = document.getElementById("mainContent");
 
-  function init() {
-    buildSelectOptions();
-    checkSpecialSchedule();
-
-    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-
-    if (!activeUser) {
-      if (!isStandalone) {
-        document.getElementById('installGuideCard').style.display = 'block';
-        document.getElementById('onboardingCard').style.display = 'none';
-      } else {
-        showOnboarding();
-      }
-    } else if (masterSchedules[activeUser]) {
-      showMainApp();
-    } else {
-      showOnboarding();
+    if (state.currentView === "schedule") {
+      main.innerHTML = renderScheduleHTML(state.currentDay);
+    } else if (state.currentView === "tasks") {
+      main.innerHTML = renderTasksHTML();
+    } else if (state.currentView === "search") {
+      main.innerHTML = renderSearchHTML();
+      runSearchFilter();
     }
   }
 
-  function showProfileStep() {
-    document.getElementById('installGuideCard').style.display = 'none';
-    document.getElementById('onboardingCard').style.display = 'block';
-  }
+  function renderScheduleHTML(dayNum) {
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    const order = dayNum === 1 ? [0, 1, 2, 3] : [1, 0, 3, 2];
+    const bellSchedule = state.isAssembly ? assemblyBellTimes : regularBellTimes;
 
-  function showOnboarding() {
-    document.getElementById('installGuideCard').style.display = 'none';
-    document.getElementById('onboardingCard').style.display = 'block';
-    document.getElementById('mainViewContainer').style.display = 'none';
-    document.getElementById('studentSelect').value = "";
-    document.getElementById('getStartedBtn').disabled = true;
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('open')) toggleSidebar();
-  }
+    // Build unified chronological items list (classes + lunch + custom events)
+    const items = [];
 
-  function saveProfileAndStart() {
-    const selectEl = document.getElementById('studentSelect');
-    if (!selectEl.value) return;
-    activeUser = selectEl.value;
-    localStorage.setItem('jupiter_user_profile', activeUser);
-    showMainApp();
-  }
-
-  function showMainApp() {
-    document.getElementById('installGuideCard').style.display = 'none';
-    document.getElementById('onboardingCard').style.display = 'none';
-    document.getElementById('mainViewContainer').style.display = 'block';
-    renderApp();
-  }
-
-  function renderApp() {
-    const container = document.getElementById('mainViewContainer');
-    container.innerHTML = '';
-
-    if (currentView === 'schedule') {
-      const student = masterSchedules[activeUser];
-      let html = `
-        <div class="glass-card">
-          <div class="schedule-header">
-            <h2>${student.name}'s Schedule</h2>
-            <span class="period-time">Day ${currentDay} ${isAssemblyDay ? '• Assembly' : ''}</span>
-          </div>
-      `;
-
-      const base = student.baseSchedule;
-      const order = (currentDay === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
-
-      if (!isAssemblyDay) {
-        regularTimes.forEach((timeSlot, i) => {
-          const classIdx = order[i];
-          const s1Data = base[classIdx].s1;
-          html += `
-            <div class="period-row">
-              <div>
-                <div class="period-time">${timeSlot.slot} • ${timeSlot.time}</div>
-                <div class="period-subject">${s1Data.title}</div>
-              </div>
-              <div class="period-meta">
-                <span class="room-badge">Rm ${s1Data.room}</span>
-                <div style="margin-top: 4px; font-size: 0.75rem;">${s1Data.teacher}</div>
+    bellSchedule.forEach(slot => {
+      if (slot.type === "lunch") {
+        const meta = subjectMeta["Lunch"];
+        items.push({
+          sortMinutes: slot.sortMinutes,
+          html: `
+            <div class="avec-card">
+              <div class="class-row single-line">
+                <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
+                <div class="class-body">
+                  <div class="class-top-line">
+                    <span class="class-name">Lunch</span>
+                    <span class="class-time">${slot.time}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          `;
+          `
+        });
+      } else if (slot.type === "assembly") {
+        items.push({
+          sortMinutes: slot.sortMinutes,
+          html: `
+            <div class="avec-card">
+              <div class="class-row">
+                <div class="emoji-circle" style="background-color: #FCA5A5;">📢</div>
+                <div class="class-body">
+                  <div class="class-top-line">
+                    <span class="class-name">School Assembly</span>
+                    <span class="class-time">${slot.time}</span>
+                  </div>
+                  <div class="class-meta">Main Auditorium | All Grades</div>
+                </div>
+              </div>
+            </div>
+          `
         });
       } else {
-        const assemblyTimes = getAssemblyTimes();
-        
-        let cIdx = order[0];
-        let sData = base[cIdx].s1;
-        html += `
-          <div class="period-row">
-            <div>
-              <div class="period-time">${assemblyTimes[0].slot} • ${assemblyTimes[0].time}</div>
-              <div class="period-subject">${sData.title}</div>
-            </div>
-            <div class="period-meta">
-              <span class="room-badge">Rm ${sData.room}</span>
-              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
-            </div>
-          </div>
-        `;
+        const actualPeriodIndex = order[slot.periodIdx];
+        const course = student.baseSchedule[actualPeriodIndex][state.activeSemester];
+        const meta = subjectMeta[course.title] || { emoji: "📖", bg: "#E5E7EB" };
+        const activeClassTasks = state.tasks.filter(
+          t => !t.completed && t.classKey.toLowerCase() === course.title.toLowerCase()
+        );
 
-        html += `
-          <div class="period-row" style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin: 6px 0;">
-            <div>
-              <div class="period-time">Assembly • ${assemblyTimes[2].time}</div>
-              <div class="period-subject" style="color: var(--text-muted); font-style: italic;">School-wide Assembly</div>
-            </div>
-            <div class="period-meta">
-              <span class="assembly-badge">Assembly</span>
-            </div>
-          </div>
-        `;
+        const taskLinesHTML = activeClassTasks.length > 0
+          ? `<div class="class-tasks-preview">
+              ${activeClassTasks.map(t => `<div class="class-task-line">${escapeHTML(t.title)}</div>`).join("")}
+            </div>`
+          : "";
 
-        cIdx = order[1];
-        sData = base[cIdx].s1;
-        html += `
-          <div class="period-row">
-            <div>
-              <div class="period-time">${assemblyTimes[1].slot} • ${assemblyTimes[1].time}</div>
-              <div class="period-subject">${sData.title}</div>
+        items.push({
+          sortMinutes: slot.sortMinutes,
+          html: `
+            <div class="avec-card">
+              <div class="class-row">
+                <div class="emoji-circle" style="background-color: ${meta.bg};">${meta.emoji}</div>
+                <div class="class-body">
+                  <div class="class-top-line">
+                    <span class="class-name">${escapeHTML(course.title)}</span>
+                    <span class="class-time">${slot.time}</span>
+                  </div>
+                  <div class="class-meta">${escapeHTML(course.teacher)} | Room ${escapeHTML(course.room)}</div>
+                  ${taskLinesHTML}
+                </div>
+              </div>
             </div>
-            <div class="period-meta">
-              <span class="room-badge">Rm ${sData.room}</span>
-              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
-            </div>
-          </div>
-        `;
-
-        cIdx = order[2];
-        sData = base[cIdx].s1;
-        html += `
-          <div class="period-row">
-            <div>
-              <div class="period-time">${assemblyTimes[3].slot} • ${assemblyTimes[3].time}</div>
-              <div class="period-subject">${sData.title}</div>
-            </div>
-            <div class="period-meta">
-              <span class="room-badge">Rm ${sData.room}</span>
-              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
-            </div>
-          </div>
-        `;
-
-        cIdx = order[3];
-        sData = base[cIdx].s1;
-        html += `
-          <div class="period-row">
-            <div>
-              <div class="period-time">${assemblyTimes[4].slot} • ${assemblyTimes[4].time}</div>
-              <div class="period-subject">${sData.title}</div>
-            </div>
-            <div class="period-meta">
-              <span class="room-badge">Rm ${sData.room}</span>
-              <div style="margin-top: 4px; font-size: 0.75rem;">${sData.teacher}</div>
-            </div>
-          </div>
-        `;
+          `
+        });
       }
+    });
 
-      html += `</div>`;
-      container.innerHTML = html;
+    // Inject custom events scheduled for this day
+    state.customEvents
+      .filter(ev => ev.day === "all" || Number(ev.day) === dayNum)
+      .forEach(ev => {
+        items.push({
+          sortMinutes: parseTimeToMinutes(ev.time),
+          html: `
+            <div class="avec-card">
+              <div class="class-row">
+                <div class="emoji-circle" style="background-color: #BAE6FD;">${ev.emoji || "📅"}</div>
+                <div class="class-body">
+                  <div class="class-top-line">
+                    <span class="class-name">${escapeHTML(ev.title)}</span>
+                    <span class="class-time">${escapeHTML(ev.time)}</span>
+                  </div>
+                  <div class="class-meta">${escapeHTML(ev.location || "Calendar Event")}</div>
+                </div>
+              </div>
+            </div>
+          `
+        });
+      });
 
-    } else if (currentView === 'compare') {
-      let html = `
-        <div class="glass-card" style="padding: 16px 24px;">
-          <label style="margin-bottom: 8px;">Select Semester</label>
-          <div class="day-toggle" style="margin-bottom: 16px;">
-            <button class="day-btn ${compareSemester === 's1' ? 'active' : ''}" onclick="setCompareSemester('s1')">Semester 1</button>
-            <button class="day-btn ${compareSemester === 's2' ? 'active' : ''}" onclick="setCompareSemester('s2')">Semester 2</button>
-          </div>
-          <label style="margin-bottom: 8px;">Select Students to Compare</label>
-          <div class="student-grid">
+    items.sort((a, b) => a.sortMinutes - b.sortMinutes);
+
+    return `<div class="card-stack">${items.map(i => i.html).join("")}</div>`;
+  }
+
+  function renderTasksHTML() {
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    const studentSubjects = ["All", ...new Set(student.baseSchedule.map(p => p[state.activeSemester].title))];
+
+    const chipsHTML = studentSubjects.map(subj => `
+      <button class="chip-btn ${state.taskFilter === subj ? "active" : ""}" onclick="setTaskFilter('${escapeHTML(subj)}')">
+        ${escapeHTML(subj)}
+      </button>
+    `).join("");
+
+    const filteredTasks = state.taskFilter === "All"
+      ? state.tasks
+      : state.tasks.filter(t => t.classKey.toLowerCase() === state.taskFilter.toLowerCase());
+
+    let listHTML = "";
+    if (filteredTasks.length === 0) {
+      listHTML = `
+        <div class="avec-card" style="text-align: center; padding: 34px 20px; color: var(--text-muted);">
+          No tasks in this view. Tap the compose button below to add one.
+        </div>
       `;
-
-      for (const key in masterSchedules) {
-        const s = masterSchedules[key];
-        const isSelected = selectedCompareUsers.includes(key);
-        html += `
-          <div class="student-card ${isSelected ? 'active' : ''}" onclick="toggleCompareUser('${key}')">
-            ${s.name}
+    } else {
+      listHTML = filteredTasks.map(t => `
+        <div class="avec-card task-item-card">
+          <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+            <button class="task-check-circle ${t.completed ? "checked" : ""}" onclick="toggleTaskComplete(${t.id})" aria-label="Toggle task">
+              ✓
+            </button>
+            <div style="min-width: 0; flex: 1;">
+              <div class="task-item-text ${t.completed ? "completed" : ""}">${escapeHTML(t.title)}</div>
+              <div class="task-item-tag">${escapeHTML(t.classKey)}</div>
+            </div>
           </div>
-        `;
-      }
+          <button class="delete-icon-btn" onclick="deleteTask(${t.id})" title="Delete task">×</button>
+        </div>
+      `).join("");
+    }
 
-      html += `
+    return `
+      <div class="section-header-row">
+        <h2 class="section-title">Tasks</h2>
+        <button class="chip-btn active" onclick="openNewSheet('task')">+ New Task</button>
+      </div>
+      <div class="filter-chips">${chipsHTML}</div>
+      <div class="card-stack">${listHTML}</div>
+    `;
+  }
+
+  function setTaskFilter(subj) {
+    state.taskFilter = subj;
+    render();
+  }
+
+  function toggleTaskComplete(id) {
+    state.tasks = state.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+    persistState();
+    render();
+  }
+
+  function deleteTask(id) {
+    state.tasks = state.tasks.filter(t => t.id !== id);
+    persistState();
+    render();
+  }
+
+  function renderSearchHTML() {
+    const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    const baseDate = new Date();
+    let stripHTML = `<div class="day-strip">`;
+
+    for (let offset = 0; offset < 5; offset++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + offset);
+      const label = offset === 0 ? "Today" : dayNames[d.getDay() % 5];
+      const dayCycle = ((state.currentDay - 1 + offset) % 2) + 1;
+      const isSelected = state.searchDayOffset === offset;
+
+      stripHTML += `
+        <div class="day-strip-item ${isSelected ? "active" : ""}" onclick="selectSearchDay(${offset})">
+          <div class="day-strip-name">${label}</div>
+          <div class="day-strip-num">${d.getDate()}</div>
+          <div class="day-strip-badge">Day ${dayCycle}</div>
+        </div>
+      `;
+    }
+    stripHTML += `</div>`;
+
+    return `
+      <div class="avec-card" style="margin-bottom: 14px; padding: 14px 16px;">
+        <label class="form-label" for="searchField">Search Tasks, Classes & Events</label>
+        <input type="text" id="searchField" class="form-control" style="margin-bottom: 0;" placeholder="Search by class, teacher, room, or task..." oninput="runSearchFilter()" />
+      </div>
+      ${stripHTML}
+      <div id="searchResultsContainer"></div>
+    `;
+  }
+
+  function selectSearchDay(offset) {
+    state.searchDayOffset = offset;
+    render();
+  }
+
+  function runSearchFilter() {
+    const input = document.getElementById("searchField");
+    const container = document.getElementById("searchResultsContainer");
+    if (!container) return;
+
+    const query = (input ? input.value : "").trim().toLowerCase();
+    const previewDay = ((state.currentDay - 1 + state.searchDayOffset) % 2) + 1;
+
+    if (!query) {
+      container.innerHTML = `
+        <div class="section-header-row">
+          <h3 class="section-title" style="font-size: 0.95rem; color: var(--text-muted);">
+            Previewing Day ${previewDay} Schedule
+          </h3>
+        </div>
+        ${renderScheduleHTML(previewDay)}
+      `;
+      return;
+    }
+
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    const matches = [];
+
+    state.tasks.forEach(t => {
+      if (t.title.toLowerCase().includes(query) || t.classKey.toLowerCase().includes(query)) {
+        matches.push({
+          badge: `Task • ${t.classKey}`,
+          title: t.title,
+          sub: t.completed ? "Completed" : "Active Task"
+        });
+      }
+    });
+
+    student.baseSchedule.forEach((period, idx) => {
+      ["s1", "s2"].forEach(sem => {
+        const c = period[sem];
+        if (
+          c.title.toLowerCase().includes(query) ||
+          c.teacher.toLowerCase().includes(query) ||
+          c.room.toLowerCase().includes(query)
+        ) {
+          matches.push({
+            badge: `Period ${idx + 1} • Sem ${sem.toUpperCase()}`,
+            title: c.title,
+            sub: `${c.teacher} | Room ${c.room}`
+          });
+        }
+      });
+    });
+
+    state.customEvents.forEach(ev => {
+      if (ev.title.toLowerCase().includes(query) || (ev.location || "").toLowerCase().includes(query)) {
+        matches.push({
+          badge: `Event • ${ev.time}`,
+          title: ev.title,
+          sub: ev.location || "Custom Event"
+        });
+      }
+    });
+
+    if (matches.length === 0) {
+      container.innerHTML = `
+        <div class="avec-card" style="text-align: center; padding: 28px; color: var(--text-muted);">
+          No matching tasks, classes, or events found.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="card-stack">
+        ${matches.map(m => `
+          <div class="avec-card">
+            <div class="task-item-tag" style="margin-top: 0; margin-bottom: 3px;">${escapeHTML(m.badge)}</div>
+            <div class="class-name">${escapeHTML(m.title)}</div>
+            <div class="class-meta" style="margin-top: 3px;">${escapeHTML(m.sub)}</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  /* ==========================================================================
+     BOTTOM SHEETS (Menu Bar, New Task/Event, Profile & Compare)
+     ========================================================================== */
+  function openSheet(innerHTML) {
+    const sheet = document.getElementById("bottomSheet");
+    const backdrop = document.getElementById("sheetBackdrop");
+    sheet.innerHTML = `<div class="sheet-grabber"></div>${innerHTML}`;
+    backdrop.classList.add("open");
+    sheet.classList.add("open");
+  }
+
+  function closeSheet() {
+    document.getElementById("sheetBackdrop").classList.remove("open");
+    document.getElementById("bottomSheet").classList.remove("open");
+  }
+
+  function openMenuSheet() {
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    openSheet(`
+      <div class="sheet-header">
+        <h3 class="sheet-title">Menu Bar</h3>
+        <button class="sheet-close" onclick="closeSheet()">×</button>
+      </div>
+
+      <button class="menu-row-btn" onclick="toggleTheme(); openMenuSheet();">
+        <span>Appearance</span>
+        <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
+      </button>
+
+      <button class="menu-row-btn" onclick="toggleSemester(); openMenuSheet();">
+        <span>Semester</span>
+        <span style="color: var(--accent-blue);">Semester ${state.activeSemester === "s1" ? "1" : "2"}</span>
+      </button>
+
+      <button class="menu-row-btn" onclick="toggleDay(); openMenuSheet();">
+        <span>Schedule Cycle</span>
+        <span style="color: var(--accent-blue);">Day ${state.currentDay}</span>
+      </button>
+
+      <button class="menu-row-btn" onclick="toggleAssembly(); openMenuSheet();">
+        <span>Assembly Bell Schedule</span>
+        <span style="color: ${state.isAssembly ? "var(--accent-green)" : "var(--text-muted)"};">${state.isAssembly ? "On" : "Off"}</span>
+      </button>
+
+      <button class="menu-row-btn" onclick="openCompareSheet()">
+        <span>Compare Schedules</span>
+        <span style="color: var(--text-muted);">›</span>
+      </button>
+
+      <button class="menu-row-btn" onclick="openProfileSheet()">
+        <span>Switch Profile (${escapeHTML(student.name)})</span>
+        <span style="color: var(--text-muted);">›</span>
+      </button>
+    `);
+  }
+
+  function toggleSemester() {
+    state.activeSemester = state.activeSemester === "s1" ? "s2" : "s1";
+    persistState();
+    render();
+  }
+
+  function toggleAssembly() {
+    state.isAssembly = !state.isAssembly;
+    persistState();
+    render();
+  }
+
+  function openNewSheet(mode = "task") {
+    const student = masterSchedules[state.activeUser] || masterSchedules.christos;
+    const classOptions = student.baseSchedule
+      .map(p => p[state.activeSemester].title)
+      .concat(["General"])
+      .filter((v, idx, arr) => arr.indexOf(v) === idx)
+      .map(subj => `<option value="${escapeHTML(subj)}">${escapeHTML(subj)}</option>`)
+      .join("");
+
+    const bodyHTML = mode === "task"
+      ? `
+        <label class="form-label" for="taskSubjectSelect">Class</label>
+        <select id="taskSubjectSelect" class="form-control">${classOptions}</select>
+
+        <label class="form-label" for="taskTitleInput">Task Details</label>
+        <input type="text" id="taskTitleInput" class="form-control" placeholder="e.g., Periodic Table test on April 1st." />
+
+        <button class="primary-action-btn" onclick="submitNewTask()">Save Task</button>
+      `
+      : `
+        <label class="form-label" for="eventTitleInput">Event Title</label>
+        <input type="text" id="eventTitleInput" class="form-control" placeholder="e.g., Robotics Club" />
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label class="form-label" for="eventTimeInput">Time</label>
+            <input type="text" id="eventTimeInput" class="form-control" value="3:15 PM" placeholder="3:15 PM" />
+          </div>
+          <div>
+            <label class="form-label" for="eventDaySelect">Schedule Day</label>
+            <select id="eventDaySelect" class="form-control">
+              <option value="1">Day 1</option>
+              <option value="2">Day 2</option>
+              <option value="all">Every Day</option>
+            </select>
           </div>
         </div>
-        <div class="glass-card">
-          <div class="schedule-header">
-            <h2>Comparison (${compareSemester.toUpperCase()})</h2>
-          </div>
-          <div class="compare-grid">
+
+        <label class="form-label" for="eventLocationInput">Room / Location</label>
+        <input type="text" id="eventLocationInput" class="form-control" placeholder="e.g., Room 119" />
+
+        <button class="primary-action-btn" onclick="submitNewEvent()">Add to Schedule</button>
       `;
 
-      for (let p = 0; p < 4; p++) {
-        const subjectCounts = {};
-        selectedCompareUsers.forEach(key => {
-          if (masterSchedules[key]) {
-            const subj = masterSchedules[key].baseSchedule[p][compareSemester].title;
-            subjectCounts[subj] = (subjectCounts[subj] || 0) + 1;
-          }
-        });
-
-        const hasMatch = Object.values(subjectCounts).some(count => count > 1);
-
-        html += `
-          <div class="compare-period-card">
-            <div class="compare-period-header">
-              <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Period ${p + 1}</span>
-              ${hasMatch ? '<span class="match-pill">Match</span>' : ''}
-            </div>
-        `;
-        
-        selectedCompareUsers.forEach(key => {
-          const sObj = masterSchedules[key];
-          if (sObj) {
-            const periodData = sObj.baseSchedule[p][compareSemester];
-            const isMatchingSubject = subjectCounts[periodData.title] > 1;
-            html += `
-              <div class="compare-student-row ${isMatchingSubject ? 'match-row' : ''}">
-                <span style="font-weight: 500; width: 80px;">${sObj.name}</span>
-                <span style="flex: 1; text-align: center; color: ${isMatchingSubject ? '#ffffff' : 'var(--text-muted)'}; font-weight: ${isMatchingSubject ? '600' : 'normal'};">${periodData.title}</span>
-                <span class="room-badge" style="font-size: 0.75rem;">Rm ${periodData.room}</span>
-              </div>
-            `;
-          }
-        });
-
-        html += `</div>`;
-      }
-      html += `</div></div>`;
-      container.innerHTML = html;
-    }
+    openSheet(`
+      <div class="sheet-header">
+        <h3 class="sheet-title">${mode === "task" ? "New Task" : "New Calendar Event"}</h3>
+        <button class="sheet-close" onclick="closeSheet()">×</button>
+      </div>
+      <div class="segmented-bar">
+        <button class="segment-btn ${mode === "task" ? "active" : ""}" onclick="openNewSheet('task')">Task</button>
+        <button class="segment-btn ${mode === "event" ? "active" : ""}" onclick="openNewSheet('event')">Calendar Event</button>
+      </div>
+      ${bodyHTML}
+    `);
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  function submitNewTask() {
+    const classKey = document.getElementById("taskSubjectSelect").value;
+    const title = document.getElementById("taskTitleInput").value.trim();
+    if (!title) return;
+
+    state.tasks.unshift({
+      id: Date.now(),
+      classKey,
+      title,
+      completed: false
+    });
+    persistState();
+    closeSheet();
+    render();
+  }
+
+  function submitNewEvent() {
+    const title = document.getElementById("eventTitleInput").value.trim();
+    const time = document.getElementById("eventTimeInput").value.trim() || "3:15 PM";
+    const dayVal = document.getElementById("eventDaySelect").value;
+    const location = document.getElementById("eventLocationInput").value.trim();
+    if (!title) return;
+
+    state.customEvents.push({
+      id: Date.now(),
+      title,
+      time,
+      location,
+      day: dayVal === "all" ? "all" : Number(dayVal),
+      emoji: "📅"
+    });
+    persistState();
+    closeSheet();
+    switchView("schedule");
+  }
+
+  function openProfileSheet() {
+    const pillsHTML = Object.keys(masterSchedules).map(key => `
+      <button class="profile-pill-btn ${state.activeUser === key ? "active" : ""}" onclick="selectProfile('${key}')">
+        ${escapeHTML(masterSchedules[key].name)}
+      </button>
+    `).join("");
+
+    openSheet(`
+      <div class="sheet-header">
+        <h3 class="sheet-title">Profile & Settings</h3>
+        <button class="sheet-close" onclick="closeSheet()">×</button>
+      </div>
+
+      <label class="form-label">Active Student Profile</label>
+      <div class="profile-grid">${pillsHTML}</div>
+
+      <button class="menu-row-btn" onclick="toggleTheme(); openProfileSheet();">
+        <span>Theme</span>
+        <span style="color: var(--accent-blue);">${state.theme === "dark" ? "Dark" : "Light"}</span>
+      </button>
+
+      <button class="primary-action-btn" style="margin-top: 6px;" onclick="openCompareSheet()">
+        Compare Schedules with Friends
+      </button>
+    `);
+  }
+
+  function selectProfile(key) {
+    state.activeUser = key;
+    persistState();
+    closeSheet();
+    render();
+  }
+
+  function openCompareSheet() {
+    const friendPills = Object.keys(masterSchedules).map(key => {
+      const selected = state.selectedFriends.includes(key);
+      return `
+        <button class="profile-pill-btn ${selected ? "active" : ""}" onclick="toggleCompareFriend('${key}')">
+          ${escapeHTML(masterSchedules[key].name)}
+        </button>
+      `;
+    }).join("");
+
+    let periodsHTML = "";
+    for (let p = 0; p < 4; p++) {
+      const subjectCounts = {};
+      state.selectedFriends.forEach(k => {
+        const s = masterSchedules[k];
+        if (s) {
+          const title = s.baseSchedule[p][state.compareSemester].title;
+          subjectCounts[title] = (subjectCounts[title] || 0) + 1;
+        }
+      });
+
+      const hasMatch = Object.values(subjectCounts).some(count => count > 1);
+      const rows = state.selectedFriends.map(k => {
+        const s = masterSchedules[k];
+        if (!s) return "";
+        const course = s.baseSchedule[p][state.compareSemester];
+        const isMatch = subjectCounts[course.title] > 1;
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: 10px; background: ${isMatch ? "var(--match-bg)" : "transparent"}; font-size: 0.86rem;">
+            <span style="font-weight: 600; width: 88px;">${escapeHTML(s.name)}</span>
+            <span style="flex: 1; text-align: center; font-weight: ${isMatch ? "700" : "500"}; color: ${isMatch ? "var(--match-text)" : "var(--text-primary)"};">${escapeHTML(course.title)}</span>
+            <span style="color: var(--text-muted); font-size: 0.78rem;">Rm ${escapeHTML(course.room)}</span>
+          </div>
+        `;
+      }).join("");
+
+      periodsHTML += `
+        <div class="avec-card" style="padding: 14px 16px; margin-bottom: 10px; background: var(--card-nested);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">
+            <span>Period ${p + 1}</span>
+            ${hasMatch ? `<span style="color: var(--accent-green);">Shared Class</span>` : ""}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">${rows}</div>
+        </div>
+      `;
+    }
+
+    openSheet(`
+      <div class="sheet-header">
+        <h3 class="sheet-title">Compare Schedules</h3>
+        <button class="sheet-close" onclick="closeSheet()">×</button>
+      </div>
+
+      <div class="segmented-bar">
+        <button class="segment-btn ${state.compareSemester === "s1" ? "active" : ""}" onclick="state.compareSemester='s1'; openCompareSheet();">Semester 1</button>
+        <button class="segment-btn ${state.compareSemester === "s2" ? "active" : ""}" onclick="state.compareSemester='s2'; openCompareSheet();">Semester 2</button>
+      </div>
+
+      <label class="form-label">Select Students</label>
+      <div class="profile-grid">${friendPills}</div>
+      ${periodsHTML}
+    `);
+  }
+
+  function toggleCompareFriend(key) {
+    if (state.selectedFriends.includes(key)) {
+      if (state.selectedFriends.length > 1) {
+        state.selectedFriends = state.selectedFriends.filter(k => k !== key);
+      }
+    } else {
+      state.selectedFriends.push(key);
+    }
+    openCompareSheet();
+  }
+
+  function escapeHTML(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // Initialize on load
+  applyTheme(state.theme);
+  render();
 </script>
 </body>
 </html>
