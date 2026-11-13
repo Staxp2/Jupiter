@@ -72,8 +72,9 @@
       background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(25px);
       border-right: var(--glass-border); z-index: 101;
       padding: 24px; box-sizing: border-box; transition: left 0.3s ease;
-      display: flex; flex-direction: column; gap: 12px;
+      display: flex; flex-direction: column; justify-content: space-between;
     }
+    .sidebar-content { display: flex; flex-direction: column; gap: 12px; }
     .sidebar.open { left: 0; }
     .sidebar h3 { margin: 0 0 10px 0; font-size: 1.1rem; border-bottom: var(--glass-border); padding-bottom: 12px; }
     .sidebar-item {
@@ -85,6 +86,7 @@
     }
     .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
     .sidebar-icon { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sidebar-footer { font-size: 0.8rem; color: var(--text-muted); text-align: center; padding-top: 16px; border-top: var(--glass-border); }
 
     .glass-card {
       background: var(--glass-bg);
@@ -105,6 +107,7 @@
       width: 100%; padding: 14px; background: #ffffff; color: #000000; border: none;
       border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
     }
+    .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .day-toggle { display: flex; gap: 8px; }
     .day-btn {
       flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
@@ -123,7 +126,7 @@
     .assembly-badge { background: rgba(255, 255, 255, 0.2); padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
 
     /* Lit-up Student Selection Cards */
-    .student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .student-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; max-height: 260px; overflow-y: auto; }
     .student-card {
       background: rgba(255, 255, 255, 0.04); border: var(--glass-border);
       padding: 12px 14px; border-radius: 12px; color: var(--text-muted);
@@ -148,6 +151,29 @@
       background: #ffffff; color: #000000; padding: 2px 8px; border-radius: 12px;
       letter-spacing: 0.5px;
     }
+
+    /* Home Screen Install Guide */
+    .install-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .step-num {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -155,19 +181,22 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
-  <h3>Menu</h3>
-  <button class="sidebar-item" onclick="switchView('schedule')">
-    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-    My Schedule
-  </button>
-  <button class="sidebar-item" onclick="switchView('compare')">
-    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-    Compare Schedules
-  </button>
-  <button class="sidebar-item" onclick="showOnboarding()">
-    <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-    Switch Profile
-  </button>
+  <div class="sidebar-content">
+    <h3>Menu</h3>
+    <button class="sidebar-item" onclick="switchView('schedule')">
+      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      My Schedule
+    </button>
+    <button class="sidebar-item" onclick="switchView('compare')">
+      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      Compare Schedules
+    </button>
+    <button class="sidebar-item" onclick="showOnboarding()">
+      <svg class="sidebar-icon" width="18" height="18" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+      Switch Profile
+    </button>
+  </div>
+  <div class="sidebar-footer">Jupiter v1.0</div>
 </div>
 
 <div class="container">
@@ -179,13 +208,34 @@
     <h1>Jupiter</h1>
   </header>
 
-  <!-- Onboarding Screen -->
-  <div id="onboardingCard" class="glass-card">
+  <!-- Onboarding Screen (Step 1: Install Instructions) -->
+  <div id="installGuideCard" class="glass-card" style="display: none;">
     <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Welcome to Jupiter</h2>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Select your name to load your schedule.</p>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">For the best experience, add Jupiter to your Home Screen first, then open it from there.</p>
+    
+    <div class="install-step">
+      <div class="step-num">1</div>
+      <div>Open your browser's menu (tap the share or menu icon).</div>
+    </div>
+    <div class="install-step">
+      <div class="step-num">2</div>
+      <div>Tap <strong>Add to Home Screen</strong> or <strong>Install App</strong>.</div>
+    </div>
+    <div class="install-step" style="margin-bottom: 20px;">
+      <div class="step-num">3</div>
+      <div>Open the app from your Home Screen to continue!</div>
+    </div>
+
+    <button class="primary-btn" onclick="showProfileStep()">Continue</button>
+  </div>
+
+  <!-- Onboarding Screen (Step 2: Profile Selection) -->
+  <div id="onboardingCard" class="glass-card" style="display: none;">
+    <h2 style="margin-top: 0; font-size: 1.4rem; font-weight: 600;">Select Profile</h2>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Choose your name to load your schedule.</p>
     <label for="studentSelect">Who are you?</label>
-    <select id="studentSelect"></select>
-    <button class="primary-btn" onclick="saveProfileAndStart()">Get Started</button>
+    <select id="studentSelect" onchange="handleSelectChange()"></select>
+    <button id="getStartedBtn" class="primary-btn" onclick="saveProfileAndStart()" disabled>Get Started</button>
   </div>
 
   <!-- Main App View -->
@@ -198,7 +248,7 @@
   let activeUser = localStorage.getItem('jupiter_user_profile');
   let currentView = 'schedule';
   let compareSemester = 's1';
-  let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle"];
+  let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"];
 
   const masterSchedules = {
     "aaliyah": {
@@ -282,6 +332,24 @@
         { s1: { title: "Gym", room: "GYM 2", teacher: "Gina T. Haros" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }
       ]
     },
+    "moshe": {
+      name: "Moshe",
+      baseSchedule: [
+        { s1: { title: "Science", room: "318", teacher: "Xiao Yue Ding" }, s2: { title: "Math", room: "307", teacher: "Alf Scharlach" } },
+        { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } },
+        { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } },
+        { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
+      ]
+    },
+    "robin": {
+      name: "Robin",
+      baseSchedule: [
+        { s1: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } },
+        { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "English", room: "305", teacher: "Michael Griffin" } },
+        { s1: { title: "Science", room: "322", teacher: "Ryan Marrast" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } },
+        { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }
+      ]
+    },
     "stella": {
       name: "Stella",
       baseSchedule: [
@@ -307,7 +375,7 @@
     let academicYear = year;
     if (month < 7) { academicYear = year - 1; }
 
-    let assemblyTimeRange = "10:10 AM - 11:10 AM"; // 2026-2027 & 2027-2028
+    let assemblyTimeRange = "10:10 AM - 11:10 AM"; 
     if (academicYear >= 2028) {
       assemblyTimeRange = "11:10 AM - 12:10 PM";
     }
@@ -323,7 +391,7 @@
 
   function buildSelectOptions() {
     const select = document.getElementById('studentSelect');
-    select.innerHTML = '';
+    select.innerHTML = '<option value="" disabled selected>-- Choose your name --</option>';
     for (const key in masterSchedules) {
       if (masterSchedules.hasOwnProperty(key)) {
         const opt = document.createElement('option');
@@ -332,6 +400,12 @@
         select.appendChild(opt);
       }
     }
+    document.getElementById('getStartedBtn').disabled = true;
+  }
+
+  function handleSelectChange() {
+    const selectEl = document.getElementById('studentSelect');
+    document.getElementById('getStartedBtn').disabled = !selectEl.value;
   }
 
   function toggleSidebar() {
@@ -375,28 +449,47 @@
     buildSelectOptions();
     checkSpecialSchedule();
 
-    if (activeUser && masterSchedules[activeUser]) {
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+    if (!activeUser) {
+      if (!isStandalone) {
+        document.getElementById('installGuideCard').style.display = 'block';
+        document.getElementById('onboardingCard').style.display = 'none';
+      } else {
+        showOnboarding();
+      }
+    } else if (masterSchedules[activeUser]) {
       showMainApp();
     } else {
       showOnboarding();
     }
   }
 
+  function showProfileStep() {
+    document.getElementById('installGuideCard').style.display = 'none';
+    document.getElementById('onboardingCard').style.display = 'block';
+  }
+
   function showOnboarding() {
+    document.getElementById('installGuideCard').style.display = 'none';
     document.getElementById('onboardingCard').style.display = 'block';
     document.getElementById('mainViewContainer').style.display = 'none';
+    document.getElementById('studentSelect').value = "";
+    document.getElementById('getStartedBtn').disabled = true;
     const sidebar = document.getElementById('sidebar');
     if (sidebar.classList.contains('open')) toggleSidebar();
   }
 
   function saveProfileAndStart() {
     const selectEl = document.getElementById('studentSelect');
+    if (!selectEl.value) return;
     activeUser = selectEl.value;
     localStorage.setItem('jupiter_user_profile', activeUser);
     showMainApp();
   }
 
   function showMainApp() {
+    document.getElementById('installGuideCard').style.display = 'none';
     document.getElementById('onboardingCard').style.display = 'none';
     document.getElementById('mainViewContainer').style.display = 'block';
     renderApp();
