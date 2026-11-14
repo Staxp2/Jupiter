@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Jupiter</title>
   <link rel="apple-touch-icon" href="jupiterappicon.png" />
   <link rel="icon" type="image/png" href="jupiterappicon.png" />
-  <meta name="theme-color" content="#F4F3EF" id="metaThemeColor" />
+  <meta name="theme-color" content="#000000" id="metaThemeColor" />
   <style>
     :root[data-theme="light"] {
       --bg-color: #F4F3EF;
       --card-bg: #FFFFFF;
-      --card-bg-hover: #FAFAFA;
       --card-border: 1px solid rgba(0, 0, 0, 0.07);
       --text-main: #000000;
       --text-muted: rgba(0, 0, 0, 0.48);
-      --accent-green: #28a745;
-      --accent-blue: #007aff;
+      --accent-blue: #007AFF;
+      --pill-btn-bg: #007AFF;
       --accent-glow: rgba(0, 122, 255, 0.14);
+      --weekend-radial: radial-gradient(circle at center, rgba(0, 122, 255, 0.16) 0%, rgba(0, 122, 255, 0.04) 48%, transparent 72%);
       --badge-bg: rgba(0, 0, 0, 0.05);
       --dock-bg: rgba(255, 255, 255, 0.88);
       --dock-pill-active: rgba(0, 0, 0, 0.07);
@@ -30,15 +30,15 @@
     :root[data-theme="dark"] {
       --bg-color: #000000;
       --card-bg: #1C1C1E;
-      --card-bg-hover: #2C2C2E;
-      --card-border: 1px solid rgba(255, 255, 255, 0.12);
+      --card-border: 1px solid rgba(255, 255, 255, 0.11);
       --text-main: #FFFFFF;
-      --text-muted: rgba(255, 255, 255, 0.5);
-      --accent-green: #32D74B;
+      --text-muted: rgba(255, 255, 255, 0.48);
       --accent-blue: #5E9EFF;
+      --pill-btn-bg: #1D63B8;
       --accent-glow: rgba(94, 158, 255, 0.18);
-      --badge-bg: rgba(255, 255, 255, 0.09);
-      --dock-bg: rgba(28, 28, 30, 0.88);
+      --weekend-radial: radial-gradient(circle at center, rgba(29, 99, 184, 0.26) 0%, rgba(16, 48, 92, 0.12) 45%, transparent 72%);
+      --badge-bg: rgba(255, 255, 255, 0.08);
+      --dock-bg: rgba(24, 24, 26, 0.9);
       --dock-pill-active: rgba(255, 255, 255, 0.12);
       --glass-blur: blur(28px) saturate(180%);
       --modal-bg: rgba(28, 28, 30, 0.98);
@@ -56,9 +56,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
-      padding: calc(env(safe-area-inset-top, 16px) + 14px) 16px 124px 16px;
+      padding: calc(env(safe-area-inset-top, 16px) + 12px) 16px 124px 16px;
       display: flex;
       justify-content: center;
+      min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
@@ -66,9 +67,11 @@
     .container {
       width: 100%;
       max-width: 440px;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Greeting Header */
+    /* Clean Greeting Header (No decorative bar above) */
     .greeting-row {
       display: flex;
       justify-content: space-between;
@@ -79,7 +82,7 @@
     }
 
     .greeting-title {
-      font-size: 1.48rem;
+      font-size: 1.46rem;
       font-weight: 700;
       letter-spacing: -0.45px;
       margin: 0;
@@ -90,9 +93,9 @@
     .day-pill {
       background: var(--card-bg);
       border: var(--card-border);
-      padding: 7px 15px;
+      padding: 7px 14px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
@@ -103,6 +106,90 @@
 
     .day-pill:active {
       transform: scale(0.96);
+    }
+
+    /* Weekend Minimal Ambient Glow View */
+    .weekend-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 62vh;
+      padding: 24px 16px;
+      background: var(--weekend-radial);
+      border-radius: 32px;
+    }
+
+    .weekend-headline {
+      font-size: 1.38rem;
+      font-weight: 500;
+      letter-spacing: -0.3px;
+      color: var(--text-main);
+      margin: 0 0 22px 0;
+    }
+
+    .weekend-primary-pill {
+      background: var(--pill-btn-bg);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 32px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.15px;
+      cursor: pointer;
+      box-shadow: 0 8px 26px rgba(29, 99, 184, 0.35);
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .weekend-primary-pill:active {
+      transform: scale(0.96);
+      opacity: 0.9;
+    }
+
+    .weekend-secondary-link {
+      margin-top: 22px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 999px;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .weekend-secondary-link:hover, .weekend-secondary-link:active {
+      color: var(--text-main);
+      background: var(--badge-bg);
+    }
+
+    /* Monday Preview Banner when viewing from Weekend */
+    .monday-preview-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--accent-blue);
+      border-radius: 18px;
+      padding: 11px 16px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .monday-back-btn {
+      background: var(--accent-glow);
+      color: var(--accent-blue);
+      border: none;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     /* Card Stack & Class Cards */
@@ -118,7 +205,12 @@
       border-radius: 24px;
       padding: 18px 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+    }
+
+    .avec-card:active {
+      transform: scale(0.99);
     }
 
     .avec-card.active-period {
@@ -153,7 +245,7 @@
     }
 
     .class-title {
-      font-size: 1.08rem;
+      font-size: 1.06rem;
       font-weight: 600;
       letter-spacing: -0.2px;
       white-space: nowrap;
@@ -179,13 +271,13 @@
     }
 
     .class-time {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
     .class-details {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
       margin-top: 4px;
       margin-left: 51px;
@@ -284,7 +376,7 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
     }
 
     .dock-group-btn {
@@ -331,7 +423,7 @@
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
       transition: transform 0.15s ease;
     }
 
@@ -373,7 +465,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.52);
+      background: rgba(0, 0, 0, 0.56);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       z-index: 200;
@@ -435,7 +527,7 @@
     }
 
     /* Form & Interactive Controls */
-    input[type="text"], input[type="date"], select {
+    input[type="text"], input[type="date"], select, textarea {
       width: 100%;
       padding: 13px 15px;
       border-radius: 14px;
@@ -446,6 +538,11 @@
       font-family: inherit;
       outline: none;
       margin-bottom: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 84px;
     }
 
     label {
@@ -549,19 +646,41 @@
       border-color: var(--accent-blue);
       background: var(--accent-glow);
     }
+
+    .email-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: var(--card-border);
+    }
+
+    .copy-chip-btn {
+      background: var(--badge-bg);
+      border: none;
+      color: var(--text-main);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Greeting & Day Indicator -->
+  <!-- Clean Greeting & Day Indicator (No decorative bar above) -->
   <div class="greeting-row">
     <h1 class="greeting-title" id="greetingTitle" onclick="openProfileSheet()">Good morning, Christos.</h1>
-    <div class="day-pill" id="dayPill" onclick="toggleDay()">Day 1</div>
+    <div class="day-pill" id="dayPill" onclick="cycleDayMode()">Weekend</div>
   </div>
 
   <!-- Main View Container -->
-  <div id="appViewContainer"></div>
+  <div id="appViewContainer" style="flex: 1; display: flex; flex-direction: column;"></div>
 </div>
 
 <!-- Multi-Part Floating Bottom Dock -->
@@ -569,9 +688,8 @@
   <div class="dock-pill-group">
     <button class="dock-group-btn active" id="dockSchedule" onclick="switchView('schedule')" title="Schedule">
       <svg width="20" height="20" viewBox="0 0 24 24">
-        <line x1="4" y1="7" x2="20" y2="7"></line>
-        <line x1="4" y1="12" x2="20" y2="12"></line>
-        <line x1="4" y1="17" x2="20" y2="17"></line>
+        <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+        <line x1="4" y1="9" x2="20" y2="9"></line>
       </svg>
     </button>
     <button class="dock-group-btn" id="dockTasks" onclick="switchView('tasks')" title="Tasks">
@@ -638,7 +756,7 @@
   function openJupiterDB() {
     return new Promise((resolve, reject) => {
       if (!window.indexedDB) return reject('No IndexedDB');
-      const req = window.indexedDB.open('JupiterDB', 1);
+      const req = window.indexedDB.open('JupiterDB', 2);
       req.onupgradeneeded = (e) => {
         const db = e.target.result;
         if (!db.objectStoreNames.contains('kv')) {
@@ -660,7 +778,7 @@
   async function hydrateFromIndexedDB() {
     try {
       const db = await openJupiterDB();
-      const keys = ['jupiter_user_profile', 'jupiter_tasks', 'jupiter_custom_events', 'jupiter_theme', 'jupiter_semester'];
+      const keys = ['jupiter_user_profile', 'jupiter_tasks', 'jupiter_custom_events', 'jupiter_theme', 'jupiter_semester', 'jupiter_day_override', 'jupiter_notes'];
       for (const k of keys) {
         if (!safeGetItem(k)) {
           const val = await new Promise(res => {
@@ -682,26 +800,39 @@
     if (!raw) return fallback;
     try {
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : fallback;
+      return (Array.isArray(fallback) ? Array.isArray(parsed) : typeof parsed === 'object') ? parsed : fallback;
     } catch (e) {
       return fallback;
     }
   }
 
-  // App State
-  let currentDay = 1;
+  // App State & Preferences
   let activeUser = safeGetItem('jupiter_user_profile') || 'christos';
   let activeSemester = safeGetItem('jupiter_semester') || 's1';
   let currentView = 'schedule';
-  let currentTheme = safeGetItem('jupiter_theme') || 'light';
+  let currentTheme = safeGetItem('jupiter_theme') || 'dark';
   let compareSemester = activeSemester;
   let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"];
   let selectedEventEmoji = '📅';
 
-  // Zero default tasks
+  // Day override: 'auto' (uses real calendar day; shows Weekend view on Sat/Sun), '1', '2', or 'weekend'
+  let dayOverride = safeGetItem('jupiter_day_override') || 'auto';
+  let previewingMonday = false;
+
   let tasks = parseJSONSafe(safeGetItem('jupiter_tasks'), []);
   let customEvents = parseJSONSafe(safeGetItem('jupiter_custom_events'), []);
+  let classNotes = parseJSONSafe(safeGetItem('jupiter_notes'), {});
 
+  // Helper to strictly format teacher emails as firstname.lastname@tdsb.on.ca
+  function formatTdsbEmail(teacherName) {
+    const parts = teacherName.trim().toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
+    if (parts.length < 2) return `${parts[0] || 'teacher'}@tdsb.on.ca`;
+    const lastName = parts[parts.length - 1];
+    const firstNames = parts.slice(0, parts.length - 1).join('');
+    return `${firstNames}.${lastName}@tdsb.on.ca`;
+  }
+
+  // Master Student Rosters
   const masterSchedules = {
     "aaliyah": { name: "Aaliyah", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
     "caleb": { name: "Caleb", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
@@ -717,29 +848,38 @@
     "stella": { name: "Stella", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }] }
   };
 
-  const subjectEmojis = {
-    "Science": "🧪",
-    "Geography": "🌍",
-    "Lunch": "🍔",
-    "Math": "🔢",
-    "French": "🇫🇷",
-    "English": "📚",
-    "Drama": "🎭",
-    "Gym": "⚽",
-    "Computer Technology": "💻",
-    "Communications Technology": "🖥️",
-    "Family Studies": "🍳",
-    "Visual Arts": "🎨",
-    "Music": "🎵"
+  // Distinct Tinted Circular Emoji Subject Badges
+  const subjectStyles = {
+    "Science": { emoji: "🧪", bgLight: "rgba(52, 199, 89, 0.14)", bgDark: "rgba(52, 199, 89, 0.22)" },
+    "Geography": { emoji: "🌍", bgLight: "rgba(0, 122, 255, 0.14)", bgDark: "rgba(94, 158, 255, 0.22)" },
+    "Lunch": { emoji: "🍔", bgLight: "rgba(255, 149, 0, 0.15)", bgDark: "rgba(255, 159, 10, 0.22)" },
+    "Math": { emoji: "🔢", bgLight: "rgba(175, 82, 222, 0.14)", bgDark: "rgba(191, 90, 242, 0.22)" },
+    "French": { emoji: "🇫🇷", bgLight: "rgba(88, 86, 214, 0.14)", bgDark: "rgba(94, 92, 230, 0.22)" },
+    "English": { emoji: "📚", bgLight: "rgba(255, 59, 48, 0.13)", bgDark: "rgba(255, 69, 58, 0.22)" },
+    "Drama": { emoji: "🎭", bgLight: "rgba(255, 45, 85, 0.14)", bgDark: "rgba(255, 55, 95, 0.22)" },
+    "Gym": { emoji: "⚽", bgLight: "rgba(48, 176, 199, 0.15)", bgDark: "rgba(64, 200, 224, 0.22)" },
+    "Computer Technology": { emoji: "💻", bgLight: "rgba(0, 199, 190, 0.15)", bgDark: "rgba(99, 230, 226, 0.22)" },
+    "Communications Technology": { emoji: "🖥️", bgLight: "rgba(50, 173, 230, 0.15)", bgDark: "rgba(100, 210, 255, 0.22)" },
+    "Family Studies": { emoji: "🍳", bgLight: "rgba(255, 204, 0, 0.18)", bgDark: "rgba(255, 214, 10, 0.22)" },
+    "Visual Arts": { emoji: "🎨", bgLight: "rgba(255, 100, 130, 0.15)", bgDark: "rgba(255, 100, 130, 0.22)" },
+    "Music": { emoji: "🎵", bgLight: "rgba(162, 132, 94, 0.18)", bgDark: "rgba(172, 142, 104, 0.24)" }
   };
 
-  // Schedule Time Blocks with Start/End minutes from midnight for Live Progress Bar
+  function getSubjectBadge(title) {
+    const entry = subjectStyles[title] || { emoji: "📖", bgLight: "rgba(0, 0, 0, 0.06)", bgDark: "rgba(255, 255, 255, 0.1)" };
+    return {
+      emoji: entry.emoji,
+      bg: currentTheme === 'dark' ? entry.bgDark : entry.bgLight
+    };
+  }
+
+  // Exact Bell Schedule Ending at 10:20, 11:40, 1:55, and 3:15
   const regularTimes = [
-    { slot: "Period 1", time: "9:00 AM", startMin: 9 * 60, endMin: 10 * 60 + 20 },
-    { slot: "Period 2", time: "10:25 AM", startMin: 10 * 60 + 25, endMin: 11 * 60 + 40 },
-    { slot: "Lunch", time: "11:40 AM", startMin: 11 * 60 + 40, endMin: 12 * 60 + 40 },
-    { slot: "Period 3", time: "12:40 PM", startMin: 12 * 60 + 40, endMin: 13 * 60 + 55 },
-    { slot: "Period 4", time: "2:00 PM", startMin: 14 * 60, endMin: 15 * 60 + 15 }
+    { slot: "Period 1", time: "9:00 AM – 10:20 AM", startMin: 9 * 60, endMin: 10 * 60 + 20 },
+    { slot: "Period 2", time: "10:25 AM – 11:40 AM", startMin: 10 * 60 + 25, endMin: 11 * 60 + 40 },
+    { slot: "Lunch", time: "11:40 AM – 12:40 PM", startMin: 11 * 60 + 40, endMin: 12 * 60 + 40 },
+    { slot: "Period 3", time: "12:40 PM – 1:55 PM", startMin: 12 * 60 + 40, endMin: 13 * 60 + 55 },
+    { slot: "Period 4", time: "2:00 PM – 3:15 PM", startMin: 14 * 60, endMin: 15 * 60 + 15 }
   ];
 
   function getTodayISO() {
@@ -750,6 +890,67 @@
     return `${y}-${m}-${d}`;
   }
 
+  // Odd calendar dates (1, 3, 5...) = Day 1, Even calendar dates (2, 4, 6...) = Day 2
+  function getDayFromDateObj(dateObj) {
+    return dateObj.getDate() % 2 === 1 ? 1 : 2;
+  }
+
+  function getUpcomingMondayDate() {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 = Sun, 6 = Sat
+    const daysToAdd = dayOfWeek === 6 ? 2 : (dayOfWeek === 0 ? 1 : 0);
+    const mon = new Date(now);
+    mon.setDate(now.getDate() + daysToAdd);
+    return mon;
+  }
+
+  function isRealWeekend() {
+    const d = new Date().getDay();
+    return d === 0 || d === 6;
+  }
+
+  function isWeekendActive() {
+    if (previewingMonday) return false;
+    if (dayOverride === 'weekend') return true;
+    if (dayOverride === '1' || dayOverride === '2') return false;
+    return isRealWeekend();
+  }
+
+  function getEffectiveDayNumber() {
+    if (previewingMonday) {
+      return getDayFromDateObj(getUpcomingMondayDate());
+    }
+    if (dayOverride === '1') return 1;
+    if (dayOverride === '2') return 2;
+    return getDayFromDateObj(new Date());
+  }
+
+  // Cycle through Auto -> Day 1 -> Day 2 -> Weekend Preview
+  function cycleDayMode() {
+    previewingMonday = false;
+    if (dayOverride === 'auto') {
+      dayOverride = '1';
+    } else if (dayOverride === '1') {
+      dayOverride = '2';
+    } else if (dayOverride === '2') {
+      dayOverride = 'weekend';
+    } else {
+      dayOverride = 'auto';
+    }
+    safeSetItem('jupiter_day_override', dayOverride);
+    renderApp();
+  }
+
+  function openMondaySchedulePreview() {
+    previewingMonday = true;
+    renderApp();
+  }
+
+  function exitMondaySchedulePreview() {
+    previewingMonday = false;
+    renderApp();
+  }
+
   function getDynamicGreeting(name) {
     const hour = new Date().getHours();
     if (hour < 12) return `Good morning, ${name}.`;
@@ -758,6 +959,9 @@
   }
 
   function getPeriodProgress(startMin, endMin) {
+    if (isWeekendActive() || previewingMonday) {
+      return { active: false, pct: 0, minsLeft: 0 };
+    }
     const now = new Date();
     const currentMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
     if (currentMin >= startMin && currentMin < endMin) {
@@ -785,21 +989,17 @@
     activeUser = safeGetItem('jupiter_user_profile') || activeUser;
     activeSemester = safeGetItem('jupiter_semester') || activeSemester;
     currentTheme = safeGetItem('jupiter_theme') || currentTheme;
+    dayOverride = safeGetItem('jupiter_day_override') || dayOverride;
     tasks = parseJSONSafe(safeGetItem('jupiter_tasks'), tasks);
     customEvents = parseJSONSafe(safeGetItem('jupiter_custom_events'), customEvents);
+    classNotes = parseJSONSafe(safeGetItem('jupiter_notes'), classNotes);
 
     setTheme(currentTheme);
     renderApp();
 
-    // Update live greeting and period progress bar every 15 seconds
     setInterval(() => {
-      if (currentView === 'schedule') renderApp();
+      if (currentView === 'schedule' && !isWeekendActive()) renderApp();
     }, 15000);
-  }
-
-  function toggleDay() {
-    currentDay = currentDay === 1 ? 2 : 1;
-    renderApp();
   }
 
   function switchView(view) {
@@ -814,7 +1014,17 @@
   function updateBadgesAndHeader() {
     const student = masterSchedules[activeUser] || masterSchedules["christos"];
     document.getElementById('greetingTitle').textContent = getDynamicGreeting(student.name);
-    document.getElementById('dayPill').textContent = `Day ${currentDay}`;
+
+    const dayPill = document.getElementById('dayPill');
+    if (previewingMonday) {
+      dayPill.textContent = `Mon • Day ${getEffectiveDayNumber()}`;
+    } else if (isWeekendActive()) {
+      dayPill.textContent = dayOverride === 'weekend' ? 'Weekend (Preview)' : 'Weekend';
+    } else {
+      const dayNum = getEffectiveDayNumber();
+      dayPill.textContent = dayOverride === 'auto' ? `Day ${dayNum}` : `Day ${dayNum} • Manual`;
+    }
+
     document.getElementById('profileInitials').textContent = student.name.slice(0, 2).toUpperCase();
 
     const incompleteCount = tasks.filter(t => !t.completed).length;
@@ -827,22 +1037,48 @@
     const container = document.getElementById('appViewContainer');
     const student = masterSchedules[activeUser] || masterSchedules["christos"];
     const todayStr = getTodayISO();
+    const currentDayNum = getEffectiveDayNumber();
 
     if (currentView === 'schedule') {
+      // Dedicated Weekend View inspired by minimal ambient glow screen
+      if (isWeekendActive()) {
+        container.innerHTML = `
+          <div class="weekend-stage">
+            <h2 class="weekend-headline">Enjoy your weekend</h2>
+            <button class="weekend-primary-pill" onclick="switchView('tasks')">View all tasks</button>
+            <button class="weekend-secondary-link" onclick="openMondaySchedulePreview()">View Monday's schedule</button>
+          </div>
+        `;
+        return;
+      }
+
       let html = `<div class="card-stack">`;
+
+      if (previewingMonday) {
+        const monDate = getUpcomingMondayDate();
+        const monLabel = monDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        html += `
+          <div class="monday-preview-banner">
+            <span>📅 ${monLabel} (Day ${currentDayNum})</span>
+            <button class="monday-back-btn" onclick="exitMondaySchedulePreview()">Back to Weekend</button>
+          </div>
+        `;
+      }
+
       const base = student.baseSchedule;
-      const order = (currentDay === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
+      const order = (currentDayNum === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
 
       regularTimes.forEach((ts, i) => {
         const progress = getPeriodProgress(ts.startMin, ts.endMin);
         const activeClass = progress.active ? 'active-period' : '';
 
         if (ts.slot === "Lunch") {
+          const badge = getSubjectBadge("Lunch");
           html += `
             <div class="avec-card ${activeClass}">
               <div class="class-header">
                 <div class="class-left">
-                  <div class="emoji-badge">${subjectEmojis["Lunch"]}</div>
+                  <div class="emoji-badge" style="background: ${badge.bg};">${badge.emoji}</div>
                   <div class="class-title">Lunch</div>
                 </div>
                 <div class="class-time-wrap">
@@ -867,22 +1103,22 @@
           const classIdx = (i > 2) ? i - 1 : i;
           const cIdx = order[classIdx];
           const classObj = base[cIdx][activeSemester];
-          const emoji = subjectEmojis[classObj.title] || "📖";
+          const badge = getSubjectBadge(classObj.title);
           const classTasks = tasks.filter(t => t.classKey.toLowerCase() === classObj.title.toLowerCase() && !t.completed);
 
           html += `
-            <div class="avec-card ${activeClass}">
+            <div class="avec-card ${activeClass}" onclick="openClassDetailModal('${escapeJS(classObj.title)}', '${escapeJS(classObj.teacher)}', '${escapeJS(classObj.room)}')">
               <div class="class-header">
                 <div class="class-left">
-                  <div class="emoji-badge">${emoji}</div>
-                  <div class="class-title">${classObj.title}</div>
+                  <div class="emoji-badge" style="background: ${badge.bg};">${badge.emoji}</div>
+                  <div class="class-title">${escapeHTML(classObj.title)}</div>
                 </div>
                 <div class="class-time-wrap">
                   ${progress.active ? '<span class="now-badge">NOW</span>' : ''}
                   <span class="class-time">${ts.time}</span>
                 </div>
               </div>
-              <div class="class-details">${classObj.teacher} | Room ${classObj.room}</div>
+              <div class="class-details">${escapeHTML(classObj.teacher)} | Room ${escapeHTML(classObj.room)}</div>
               ${progress.active ? `
                 <div class="period-progress-wrap">
                   <div class="period-progress-meta">
@@ -908,11 +1144,18 @@
         }
       });
 
-      // Match Custom Events (standalone date-specific OR repeating day)
+      // Matching Custom Events
+      const targetDateStr = previewingMonday
+        ? (() => {
+            const m = getUpcomingMondayDate();
+            return `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}-${String(m.getDate()).padStart(2, '0')}`;
+          })()
+        : todayStr;
+
       const matchingEvents = customEvents.filter(ce => {
-        if (ce.date) return ce.date === todayStr;
+        if (ce.date) return ce.date === targetDateStr;
         if (ce.day === 'all') return true;
-        return ce.day === currentDay;
+        return ce.day === currentDayNum;
       });
 
       matchingEvents.forEach(ce => {
@@ -926,7 +1169,7 @@
               </div>
               <div class="class-time-wrap">
                 <span class="class-time">${escapeHTML(ce.time)}</span>
-                <button class="card-remove-btn" onclick="deleteEvent(${ce.id})" title="Remove Event">×</button>
+                <button class="card-remove-btn" onclick="event.stopPropagation(); deleteEvent(${ce.id})" title="Remove Event">×</button>
               </div>
             </div>
             <div class="class-details">${escapeHTML(subLabel)}</div>
@@ -947,11 +1190,11 @@
       `;
 
       if (tasks.length === 0) {
-        html += `<div class="avec-card" style="text-align: center; color: var(--text-muted); padding: 32px 20px;">No tasks yet. Tap + Add Task to create one.</div>`;
+        html += `<div class="avec-card" style="text-align: center; color: var(--text-muted); padding: 32px 20px; cursor: default;">No tasks yet. Tap + Add Task to create one.</div>`;
       } else {
         tasks.forEach(t => {
           html += `
-            <div class="avec-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+            <div class="avec-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: default;">
               <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
                 <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask(${t.id})" style="width: 20px; height: 20px; cursor: pointer; flex-shrink: 0;" />
                 <div style="min-width: 0;">
@@ -969,7 +1212,7 @@
 
     } else if (currentView === 'search') {
       container.innerHTML = `
-        <div class="avec-card" style="margin-bottom: 14px;">
+        <div class="avec-card" style="margin-bottom: 14px; cursor: default;">
           <label>Search Classes, Tasks & Events</label>
           <input type="text" id="searchInput" style="margin-bottom: 0;" placeholder="Search by subject, teacher, room, or date..." oninput="filterSearch(this.value)" />
         </div>
@@ -979,7 +1222,72 @@
     }
   }
 
-  // Streamlined Menu Bar (Strictly Manage Calendar Events & Compare Schedules with Icons)
+  // Quick Class Notes & Teacher Details Drawer with TDSB Email & Copy Button
+  function openClassDetailModal(title, teacher, room) {
+    const sheet = document.getElementById('sheetContent');
+    const noteKey = `${activeUser}_${activeSemester}_${title}`;
+    const currentNote = classNotes[noteKey] || '';
+    const subjectTasks = tasks.filter(t => t.classKey.toLowerCase() === title.toLowerCase());
+    const badge = getSubjectBadge(title);
+    const teacherEmail = formatTdsbEmail(teacher);
+
+    sheet.innerHTML = `
+      <div class="sheet-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="emoji-badge" style="width: 34px; height: 34px; font-size: 1.05rem; background: ${badge.bg};">${badge.emoji}</div>
+          <h3 class="sheet-title" style="margin: 0;">${escapeHTML(title)}</h3>
+        </div>
+        <button class="close-btn" onclick="closeSheets()">×</button>
+      </div>
+
+      <div class="avec-card" style="margin-bottom: 14px; cursor: default; padding: 14px 16px;">
+        <label>Teacher & Room</label>
+        <div style="font-weight: 600; font-size: 1rem; margin-top: 2px;">${escapeHTML(teacher)}</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1px;">Room ${escapeHTML(room)}</div>
+        <div class="email-action-row">
+          <a href="mailto:${escapeHTML(teacherEmail)}" style="color: var(--accent-blue); text-decoration: none; font-size: 0.84rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">✉️ ${escapeHTML(teacherEmail)}</a>
+          <button type="button" class="copy-chip-btn" id="copyEmailBtn" onclick="copyTeacherEmail('${escapeJS(teacherEmail)}')">Copy</button>
+        </div>
+      </div>
+
+      <label>Quick Class Notes</label>
+      <textarea id="classNoteInput" placeholder="Jot down formulas, reminders, or exam notes..." oninput="saveClassNote('${escapeJS(noteKey)}', this.value)">${escapeHTML(currentNote)}</textarea>
+
+      <label style="margin-top: 14px;">Tasks for ${escapeHTML(title)}</label>
+      <div class="card-stack" style="margin-top: 6px;">
+        ${subjectTasks.length === 0 ? '<div style="font-size: 0.85rem; color: var(--text-muted); padding: 8px 0;">No active tasks for this class.</div>' : subjectTasks.map(t => `
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 8px 12px; background: var(--card-bg); border: var(--card-border); border-radius: 12px;">
+            <span style="text-decoration: ${t.completed ? 'line-through' : 'none'};">${escapeHTML(t.title)}</span>
+            <span style="font-size: 0.75rem; color: var(--accent-blue);">${t.completed ? 'Done' : 'Pending'}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    document.getElementById('sheetOverlay').classList.add('open');
+    sheet.classList.add('open');
+  }
+
+  function copyTeacherEmail(email) {
+    const temp = document.createElement('textarea');
+    temp.value = email;
+    document.body.appendChild(temp);
+    temp.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(temp);
+
+    const btn = document.getElementById('copyEmailBtn');
+    if (btn) {
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+    }
+  }
+
+  function saveClassNote(noteKey, val) {
+    classNotes[noteKey] = val;
+    safeSetItem('jupiter_notes', JSON.stringify(classNotes));
+  }
+
+  // Streamlined Menu Bar
   function openMenuSheet() {
     const sheet = document.getElementById('sheetContent');
     sheet.innerHTML = `
@@ -1027,7 +1335,7 @@
           ? `Standalone • ${ce.date}`
           : (ce.day === 'all' ? 'Repeats • Every Day' : `Repeats • Day ${ce.day}`);
         html += `
-          <div class="avec-card" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <div class="avec-card" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: default;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <div class="emoji-badge">${ce.emoji || '📅'}</div>
               <div>
@@ -1064,6 +1372,14 @@
         <button class="student-pill ${activeSemester === 's2' ? 'active' : ''}" style="flex: 0.6;" onclick="switchSemester('s2')">Sem 2</button>
       </div>
 
+      <label>Schedule View Mode</label>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 18px;">
+        <button class="student-pill ${dayOverride === 'auto' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('auto')">Auto</button>
+        <button class="student-pill ${dayOverride === '1' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('1')">Day 1</button>
+        <button class="student-pill ${dayOverride === '2' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('2')">Day 2</button>
+        <button class="student-pill ${dayOverride === 'weekend' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('weekend')">Weekend</button>
+      </div>
+
       <label>Select Your Profile</label>
       <div class="student-grid" style="margin-bottom: 20px;">
     `;
@@ -1083,6 +1399,14 @@
     sheet.innerHTML = html;
     document.getElementById('sheetOverlay').classList.add('open');
     sheet.classList.add('open');
+  }
+
+  function setDayOverrideMode(mode) {
+    previewingMonday = false;
+    dayOverride = mode;
+    safeSetItem('jupiter_day_override', mode);
+    openProfileSheet();
+    renderApp();
   }
 
   function switchProfile(key) {
@@ -1257,7 +1581,6 @@
     for (let p = 0; p < 4; p++) {
       const myPeriod = activeStudent.baseSchedule[p][compareSemester];
 
-      // Friends who match the active profile's exact class (same title & room)
       const matchingFriends = selectedCompareUsers.filter(k => {
         if (k === activeUser) return false;
         const friendPd = masterSchedules[k].baseSchedule[p][compareSemester];
@@ -1265,15 +1588,14 @@
       });
 
       html += `
-        <div class="avec-card" style="padding: 14px 16px;">
+        <div class="avec-card" style="padding: 14px 16px; cursor: default;">
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
             <span>Period ${p + 1} • Your Class: ${myPeriod.title}</span>
-            ${matchingFriends.length > 0 ? `<span style="color: var(--accent-green);">${matchingFriends.length} with you</span>` : ''}
+            ${matchingFriends.length > 0 ? `<span style="color: var(--accent-blue);">${matchingFriends.length} with you</span>` : ''}
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px;">
       `;
 
-      // Always display active user at the top of each period
       const orderedKeys = [activeUser, ...selectedCompareUsers.filter(k => k !== activeUser)];
 
       orderedKeys.forEach(k => {
@@ -1283,8 +1605,8 @@
         const matchesActiveUser = !isSelf && pd.title === myPeriod.title && pd.room === myPeriod.room;
 
         html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 6px 8px; border-radius: 10px; background: ${matchesActiveUser ? 'rgba(50, 215, 75, 0.14)' : (isSelf ? 'var(--badge-bg)' : 'transparent')};">
-            <span style="font-weight: ${isSelf || matchesActiveUser ? '700' : '500'}; width: 96px; color: ${matchesActiveUser ? 'var(--accent-green)' : 'var(--text-main)'};">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 6px 8px; border-radius: 10px; background: ${matchesActiveUser ? 'var(--accent-glow)' : (isSelf ? 'var(--badge-bg)' : 'transparent')};">
+            <span style="font-weight: ${isSelf || matchesActiveUser ? '700' : '500'}; width: 96px; color: ${matchesActiveUser ? 'var(--accent-blue)' : 'var(--text-main)'};">
               ${sObj.name}${isSelf ? ' (You)' : ''}
             </span>
             <span style="flex: 1; text-align: center; font-weight: ${matchesActiveUser ? '700' : '400'};">${pd.title}</span>
@@ -1340,17 +1662,18 @@
     student.baseSchedule.forEach((bs, idx) => {
       ['s1', 's2'].forEach(sem => {
         const c = bs[sem];
-        if (!q || c.title.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q) || c.room.toLowerCase().includes(q)) {
-          matches.push({ type: `Period ${idx + 1} (${sem.toUpperCase()})`, text: c.title, sub: `${c.teacher} | Room ${c.room}` });
+        const email = formatTdsbEmail(c.teacher);
+        if (!q || c.title.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q) || c.room.toLowerCase().includes(q) || email.includes(q)) {
+          matches.push({ type: `Period ${idx + 1} (${sem.toUpperCase()})`, text: c.title, sub: `${c.teacher} (${email}) | Room ${c.room}` });
         }
       });
     });
 
     if (matches.length === 0) {
-      resultsContainer.innerHTML = `<div class="avec-card" style="text-align: center; color: var(--text-muted);">No matching classes, tasks, or events.</div>`;
+      resultsContainer.innerHTML = `<div class="avec-card" style="text-align: center; color: var(--text-muted); cursor: default;">No matching classes, tasks, or events.</div>`;
     } else {
       resultsContainer.innerHTML = matches.map(m => `
-        <div class="avec-card" style="padding: 14px 18px;">
+        <div class="avec-card" style="padding: 14px 18px; cursor: default;">
           <div style="font-size: 0.72rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 3px;">${escapeHTML(m.type)}</div>
           <div style="font-weight: 600; font-size: 0.98rem;">${escapeHTML(m.text)}</div>
           <div style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">${escapeHTML(m.sub)}</div>
@@ -1365,6 +1688,7 @@
       semester: activeSemester,
       tasks,
       customEvents,
+      classNotes,
       theme: currentTheme,
       exportedAt: new Date().toISOString()
     };
@@ -1392,6 +1716,10 @@
           customEvents = data.customEvents;
           safeSetItem('jupiter_custom_events', JSON.stringify(customEvents));
         }
+        if (data.classNotes && typeof data.classNotes === 'object') {
+          classNotes = data.classNotes;
+          safeSetItem('jupiter_notes', JSON.stringify(classNotes));
+        }
         if (data.profile && masterSchedules[data.profile]) {
           activeUser = data.profile;
           safeSetItem('jupiter_user_profile', activeUser);
@@ -1403,7 +1731,8 @@
         closeSheets();
         renderApp();
       } catch (err) {
-        alert('Invalid Jupiter backup file.');
+        const sheet = document.getElementById('sheetContent');
+        sheet.innerHTML = `<div class="sheet-header"><h3 class="sheet-title">Restore Error</h3><button class="close-btn" onclick="closeSheets()">×</button></div><p style="color:var(--text-muted);">Invalid Jupiter backup file.</p>`;
       }
     };
     reader.readAsText(file);
@@ -1417,6 +1746,10 @@
       '"': '&quot;',
       "'": '&#39;'
     })[m]);
+  }
+
+  function escapeJS(str) {
+    return String(str || '').replace(/['\\]/g, '\\$&');
   }
 
   function closeSheets() {
