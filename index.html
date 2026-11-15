@@ -25,6 +25,7 @@
       --modal-bg: rgba(255, 255, 255, 0.98);
       --input-bg: rgba(0, 0, 0, 0.045);
       --progress-track: rgba(0, 122, 255, 0.15);
+      --blur-fade: linear-gradient(to top, rgba(244, 243, 239, 0.95) 0%, rgba(244, 243, 239, 0.6) 50%, transparent 100%);
     }
 
     :root[data-theme="dark"] {
@@ -44,6 +45,7 @@
       --modal-bg: rgba(28, 28, 30, 0.98);
       --input-bg: rgba(255, 255, 255, 0.08);
       --progress-track: rgba(94, 158, 255, 0.2);
+      --blur-fade: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
     }
 
     * {
@@ -56,7 +58,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
-      padding: calc(env(safe-area-inset-top, 16px) + 12px) 16px 124px 16px;
+      padding: calc(env(safe-area-inset-top, 16px) + 12px) 16px 140px 16px;
       display: flex;
       justify-content: center;
       min-height: 100vh;
@@ -71,7 +73,140 @@
       flex-direction: column;
     }
 
-    /* Clean Greeting Header (No decorative bar above) */
+    /* Glassmorphic bottom blur fade zone underneath dock */
+    .bottom-blur-gradient {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 118px;
+      background: var(--blur-fade);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    /* Search View Future Date Flipper & Strip */
+    .date-flipper-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .date-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--input-bg);
+      border: var(--card-border);
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .date-nav-btn:active {
+      transform: scale(0.93);
+    }
+
+    .date-center-pill {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--input-bg);
+      border: var(--card-border);
+      border-radius: 14px;
+      padding: 6px 10px;
+      cursor: pointer;
+      position: relative;
+      min-width: 0;
+    }
+
+    .date-center-main {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .date-center-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-top: 1px;
+    }
+
+    .week-strip-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .week-strip-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .week-day-chip {
+      min-width: 48px;
+      padding: 8px 6px;
+      border-radius: 14px;
+      background: var(--input-bg);
+      border: var(--card-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.18s ease;
+    }
+
+    .week-day-chip.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #FFFFFF;
+    }
+
+    .week-day-chip.active .week-chip-dow,
+    .week-day-chip.active .week-chip-tag {
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .week-chip-dow {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .week-chip-num {
+      font-size: 0.96rem;
+      font-weight: 700;
+    }
+
+    .week-chip-tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
     .greeting-row {
       display: flex;
       justify-content: space-between;
@@ -108,7 +243,6 @@
       transform: scale(0.96);
     }
 
-    /* Weekend Minimal Ambient Glow View */
     .weekend-stage {
       flex: 1;
       display: flex;
@@ -167,7 +301,6 @@
       background: var(--badge-bg);
     }
 
-    /* Monday Preview Banner when viewing from Weekend */
     .monday-preview-banner {
       display: flex;
       justify-content: space-between;
@@ -192,7 +325,6 @@
       cursor: pointer;
     }
 
-    /* Card Stack & Class Cards */
     .card-stack {
       display: flex;
       flex-direction: column;
@@ -283,7 +415,6 @@
       margin-left: 51px;
     }
 
-    /* Live Period Progress Bar */
     .period-progress-wrap {
       margin-top: 12px;
       margin-left: 51px;
@@ -351,7 +482,6 @@
       flex-shrink: 0;
     }
 
-    /* Multi-Part Floating Bottom Dock */
     .floating-dock-wrapper {
       position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 12px) + 12px);
@@ -458,7 +588,6 @@
       stroke-linejoin: round;
     }
 
-    /* Bottom Sheet Modal */
     .sheet-overlay {
       position: fixed;
       top: 0;
@@ -526,7 +655,6 @@
       cursor: pointer;
     }
 
-    /* Form & Interactive Controls */
     input[type="text"], input[type="date"], select, textarea {
       width: 100%;
       padding: 13px 15px;
@@ -592,6 +720,129 @@
       color: var(--bg-color);
       font-weight: 600;
       border-color: var(--text-main);
+    }
+
+    /* iOS Apple Account style profile sheet elements */
+    .apple-account-header {
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .apple-account-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .apple-account-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5E9EFF 0%, #AF52DE 100%);
+      color: #FFFFFF;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .apple-account-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .apple-account-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #34C759;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .apple-pill-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .apple-action-pill {
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: center;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .apple-action-pill:active {
+      transform: scale(0.97);
+    }
+
+    .apple-settings-list {
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .apple-settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: var(--card-border);
+      background: transparent;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      width: 100%;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: background 0.15s ease;
+    }
+
+    .apple-settings-item:last-child {
+      border-bottom: none;
+    }
+
+    .apple-settings-item:active {
+      background: var(--badge-bg);
+    }
+
+    .apple-settings-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .apple-settings-icon {
+      font-size: 1.15rem;
     }
 
     .menu-action-card {
@@ -673,15 +924,16 @@
 <body>
 
 <div class="container">
-  <!-- Clean Greeting & Day Indicator (No decorative bar above) -->
   <div class="greeting-row">
     <h1 class="greeting-title" id="greetingTitle" onclick="openProfileSheet()">Good morning, Christos.</h1>
     <div class="day-pill" id="dayPill" onclick="cycleDayMode()">Weekend</div>
   </div>
 
-  <!-- Main View Container -->
   <div id="appViewContainer" style="flex: 1; display: flex; flex-direction: column;"></div>
 </div>
+
+<!-- Glassmorphic Bottom Blur Fade Area -->
+<div class="bottom-blur-gradient"></div>
 
 <!-- Multi-Part Floating Bottom Dock -->
 <nav class="floating-dock-wrapper" aria-label="Primary Navigation">
@@ -714,7 +966,7 @@
     </svg>
   </button>
 
-  <button class="dock-circle-btn" id="dockSearch" onclick="switchView('search')" title="Search">
+  <button class="dock-circle-btn" id="dockSearch" onclick="switchView('search')" title="Search & Day Hub">
     <svg width="21" height="21" viewBox="0 0 24 24">
       <circle cx="11" cy="11" r="7.5"></circle>
       <line x1="20.5" y1="20.5" x2="16.35" y2="16.35"></line>
@@ -815,15 +1067,15 @@
   let selectedCompareUsers = ["christos", "stella", "aaliyah", "christopher", "michelle", "moshe", "robin"];
   let selectedEventEmoji = '📅';
 
-  // Day override: 'auto' (uses real calendar day; shows Weekend view on Sat/Sun), '1', '2', or 'weekend'
   let dayOverride = safeGetItem('jupiter_day_override') || 'auto';
   let previewingMonday = false;
+  let searchSelectedDateISO = null;
+  let searchQueryText = '';
 
   let tasks = parseJSONSafe(safeGetItem('jupiter_tasks'), []);
   let customEvents = parseJSONSafe(safeGetItem('jupiter_custom_events'), []);
   let classNotes = parseJSONSafe(safeGetItem('jupiter_notes'), {});
 
-  // Helper to strictly format teacher emails as firstname.lastname@tdsb.on.ca
   function formatTdsbEmail(teacherName) {
     const parts = teacherName.trim().toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
     if (parts.length < 2) return `${parts[0] || 'teacher'}@tdsb.on.ca`;
@@ -832,7 +1084,6 @@
     return `${firstNames}.${lastName}@tdsb.on.ca`;
   }
 
-  // Master Student Rosters
   const masterSchedules = {
     "aaliyah": { name: "Aaliyah", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Science", room: "310", teacher: "Ryan Marrast" } }, { s1: { title: "Family Studies", room: "113", teacher: "Sara Cook" }, s2: { title: "Drama", room: "200", teacher: "Douglas Langdon" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "English", room: "308", teacher: "Millee Zhou" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Gym", room: "GYM 2", teacher: "Danielle Hronsky" } }] },
     "caleb": { name: "Caleb", baseSchedule: [{ s1: { title: "Computer Technology", room: "119", teacher: "Wei Qin" }, s2: { title: "French", room: "114", teacher: "Leah Raghunath" } }, { s1: { title: "English", room: "308", teacher: "Millee Zhou" }, s2: { title: "Science", room: "311", teacher: "Xiao Yue Ding" } }, { s1: { title: "Math", room: "307", teacher: "Alf Scharlach" }, s2: { title: "Gym", room: "GYM 1", teacher: "Danielle Hronsky" } }, { s1: { title: "Drama", room: "200", teacher: "Sonya Ugarkovic" }, s2: { title: "Geography", room: "214", teacher: "Lucia Domingues" } }] },
@@ -848,7 +1099,6 @@
     "stella": { name: "Stella", baseSchedule: [{ s1: { title: "Geography", room: "117A", teacher: "Robert Cooper" }, s2: { title: "Gym", room: "GYM 2", teacher: "Cecily Osborne" } }, { s1: { title: "Math", room: "227", teacher: "Ravi Singh" }, s2: { title: "Communications Technology", room: "122", teacher: "Lisa Rubenzahl" } }, { s1: { title: "English", room: "100", teacher: "Paul Savaria" }, s2: { title: "Science", room: "322", teacher: "Ryan Marrast" } }, { s1: { title: "French", room: "114", teacher: "Leah Raghunath" }, s2: { title: "Visual Arts", room: "120", teacher: "Stephanie Marshall" } }] }
   };
 
-  // Distinct Tinted Circular Emoji Subject Badges
   const subjectStyles = {
     "Science": { emoji: "🧪", bgLight: "rgba(52, 199, 89, 0.14)", bgDark: "rgba(52, 199, 89, 0.22)" },
     "Geography": { emoji: "🌍", bgLight: "rgba(0, 122, 255, 0.14)", bgDark: "rgba(94, 158, 255, 0.22)" },
@@ -873,14 +1123,83 @@
     };
   }
 
-  // Exact Bell Schedule Ending at 10:20, 11:40, 1:55, and 3:15
+  // Start times displayed on cards; endMin kept internally for live countdowns
   const regularTimes = [
-    { slot: "Period 1", time: "9:00 AM – 10:20 AM", startMin: 9 * 60, endMin: 10 * 60 + 20 },
-    { slot: "Period 2", time: "10:25 AM – 11:40 AM", startMin: 10 * 60 + 25, endMin: 11 * 60 + 40 },
-    { slot: "Lunch", time: "11:40 AM – 12:40 PM", startMin: 11 * 60 + 40, endMin: 12 * 60 + 40 },
-    { slot: "Period 3", time: "12:40 PM – 1:55 PM", startMin: 12 * 60 + 40, endMin: 13 * 60 + 55 },
-    { slot: "Period 4", time: "2:00 PM – 3:15 PM", startMin: 14 * 60, endMin: 15 * 60 + 15 }
+    { slot: "Period 1", time: "9:00 AM", startMin: 9 * 60, endMin: 10 * 60 + 20 },
+    { slot: "Period 2", time: "10:25 AM", startMin: 10 * 60 + 25, endMin: 11 * 60 + 40 },
+    { slot: "Lunch", time: "11:40 AM", startMin: 11 * 60 + 40, endMin: 12 * 60 + 40 },
+    { slot: "Period 3", time: "12:40 PM", startMin: 12 * 60 + 40, endMin: 13 * 60 + 55 },
+    { slot: "Period 4", time: "2:00 PM", startMin: 14 * 60, endMin: 15 * 60 + 15 }
   ];
+
+  // Parse event time strings (e.g., "12:40 PM", "9:00 AM", "14:30") into minutes from midnight
+  function parseTimeToMinutes(timeStr) {
+    if (!timeStr) return 24 * 60;
+    const cleaned = String(timeStr).trim().toUpperCase();
+    const match = cleaned.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/);
+    if (!match) return 24 * 60;
+    let hours = parseInt(match[1], 10);
+    const mins = parseInt(match[2] || '0', 10);
+    const period = match[3];
+    if (period === 'PM' && hours < 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    return hours * 60 + mins;
+  }
+
+  // Build chronologically sorted timeline merging classes/lunch and matching calendar events
+  function buildChronologicalDayTimeline(student, dayNum, targetDateStr, includeClasses = true) {
+    const timeline = [];
+
+    if (includeClasses) {
+      const base = student.baseSchedule;
+      const order = (dayNum === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
+
+      regularTimes.forEach((ts, i) => {
+        if (ts.slot === "Lunch") {
+          timeline.push({
+            kind: 'lunch',
+            sortMin: ts.startMin,
+            orderPriority: 1,
+            ts
+          });
+        } else {
+          const classIdx = (i > 2) ? i - 1 : i;
+          const cIdx = order[classIdx];
+          const classObj = base[cIdx][activeSemester];
+          timeline.push({
+            kind: 'class',
+            sortMin: ts.startMin,
+            orderPriority: 1,
+            ts,
+            classObj
+          });
+        }
+      });
+    }
+
+    const matchingEvents = customEvents.filter(ce => {
+      if (ce.date) return ce.date === targetDateStr;
+      if (!includeClasses) return false;
+      if (ce.day === 'all') return true;
+      return ce.day === dayNum;
+    });
+
+    matchingEvents.forEach(ce => {
+      timeline.push({
+        kind: 'event',
+        sortMin: parseTimeToMinutes(ce.time),
+        orderPriority: 0,
+        eventObj: ce
+      });
+    });
+
+    timeline.sort((a, b) => {
+      if (a.sortMin !== b.sortMin) return a.sortMin - b.sortMin;
+      return a.orderPriority - b.orderPriority;
+    });
+
+    return timeline;
+  }
 
   function getTodayISO() {
     const now = new Date();
@@ -890,14 +1209,25 @@
     return `${y}-${m}-${d}`;
   }
 
-  // Odd calendar dates (1, 3, 5...) = Day 1, Even calendar dates (2, 4, 6...) = Day 2
+  function formatDateToISO(dateObj) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function parseISOToLocalDate(isoStr) {
+    const [y, m, d] = (isoStr || getTodayISO()).split('-').map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  }
+
   function getDayFromDateObj(dateObj) {
     return dateObj.getDate() % 2 === 1 ? 1 : 2;
   }
 
   function getUpcomingMondayDate() {
     const now = new Date();
-    const dayOfWeek = now.getDay(); // 0 = Sun, 6 = Sat
+    const dayOfWeek = now.getDay();
     const daysToAdd = dayOfWeek === 6 ? 2 : (dayOfWeek === 0 ? 1 : 0);
     const mon = new Date(now);
     mon.setDate(now.getDate() + daysToAdd);
@@ -925,7 +1255,6 @@
     return getDayFromDateObj(new Date());
   }
 
-  // Cycle through Auto -> Day 1 -> Day 2 -> Weekend Preview
   function cycleDayMode() {
     previewingMonday = false;
     if (dayOverride === 'auto') {
@@ -1040,7 +1369,6 @@
     const currentDayNum = getEffectiveDayNumber();
 
     if (currentView === 'schedule') {
-      // Dedicated Weekend View inspired by minimal ambient glow screen
       if (isWeekendActive()) {
         container.innerHTML = `
           <div class="weekend-stage">
@@ -1065,14 +1393,35 @@
         `;
       }
 
-      const base = student.baseSchedule;
-      const order = (currentDayNum === 1) ? [0, 1, 2, 3] : [1, 0, 3, 2];
+      const targetDateStr = previewingMonday
+        ? formatDateToISO(getUpcomingMondayDate())
+        : todayStr;
 
-      regularTimes.forEach((ts, i) => {
-        const progress = getPeriodProgress(ts.startMin, ts.endMin);
-        const activeClass = progress.active ? 'active-period' : '';
+      const timeline = buildChronologicalDayTimeline(student, currentDayNum, targetDateStr, true);
 
-        if (ts.slot === "Lunch") {
+      timeline.forEach(item => {
+        if (item.kind === 'event') {
+          const ce = item.eventObj;
+          const subLabel = ce.date ? `Date: ${ce.date}${ce.location ? ' | ' + ce.location : ''}` : (ce.location || 'Custom Event');
+          html += `
+            <div class="avec-card" style="border-color: var(--accent-blue);">
+              <div class="class-header">
+                <div class="class-left">
+                  <div class="emoji-badge">${ce.emoji || '📅'}</div>
+                  <div class="class-title">${escapeHTML(ce.title)}</div>
+                </div>
+                <div class="class-time-wrap">
+                  <span class="class-time">${escapeHTML(ce.time)}</span>
+                  <button class="card-remove-btn" onclick="event.stopPropagation(); deleteEvent(${ce.id})" title="Remove Event">×</button>
+                </div>
+              </div>
+              <div class="class-details">${escapeHTML(subLabel)}</div>
+            </div>
+          `;
+        } else if (item.kind === 'lunch') {
+          const ts = item.ts;
+          const progress = getPeriodProgress(ts.startMin, ts.endMin);
+          const activeClass = progress.active ? 'active-period' : '';
           const badge = getSubjectBadge("Lunch");
           html += `
             <div class="avec-card ${activeClass}">
@@ -1099,10 +1448,11 @@
               ` : ''}
             </div>
           `;
-        } else {
-          const classIdx = (i > 2) ? i - 1 : i;
-          const cIdx = order[classIdx];
-          const classObj = base[cIdx][activeSemester];
+        } else if (item.kind === 'class') {
+          const ts = item.ts;
+          const classObj = item.classObj;
+          const progress = getPeriodProgress(ts.startMin, ts.endMin);
+          const activeClass = progress.active ? 'active-period' : '';
           const badge = getSubjectBadge(classObj.title);
           const classTasks = tasks.filter(t => t.classKey.toLowerCase() === classObj.title.toLowerCase() && !t.completed);
 
@@ -1144,39 +1494,6 @@
         }
       });
 
-      // Matching Custom Events
-      const targetDateStr = previewingMonday
-        ? (() => {
-            const m = getUpcomingMondayDate();
-            return `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}-${String(m.getDate()).padStart(2, '0')}`;
-          })()
-        : todayStr;
-
-      const matchingEvents = customEvents.filter(ce => {
-        if (ce.date) return ce.date === targetDateStr;
-        if (ce.day === 'all') return true;
-        return ce.day === currentDayNum;
-      });
-
-      matchingEvents.forEach(ce => {
-        const subLabel = ce.date ? `Date: ${ce.date}${ce.location ? ' | ' + ce.location : ''}` : (ce.location || 'Custom Event');
-        html += `
-          <div class="avec-card" style="border-color: var(--accent-blue);">
-            <div class="class-header">
-              <div class="class-left">
-                <div class="emoji-badge">${ce.emoji || '📅'}</div>
-                <div class="class-title">${escapeHTML(ce.title)}</div>
-              </div>
-              <div class="class-time-wrap">
-                <span class="class-time">${escapeHTML(ce.time)}</span>
-                <button class="card-remove-btn" onclick="event.stopPropagation(); deleteEvent(${ce.id})" title="Remove Event">×</button>
-              </div>
-            </div>
-            <div class="class-details">${escapeHTML(subLabel)}</div>
-          </div>
-        `;
-      });
-
       html += `</div>`;
       container.innerHTML = html;
 
@@ -1211,18 +1528,85 @@
       container.innerHTML = html;
 
     } else if (currentView === 'search') {
+      if (!searchSelectedDateISO) searchSelectedDateISO = getTodayISO();
+      const selDateObj = parseISOToLocalDate(searchSelectedDateISO);
+      const isSelToday = searchSelectedDateISO === getTodayISO();
+      const selDow = selDateObj.getDay();
+      const isSelWeekend = selDow === 0 || selDow === 6;
+      const selDayNum = getDayFromDateObj(selDateObj);
+      const formattedHeaderDate = selDateObj.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: selDateObj.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+      });
+      const dayBadgeLabel = isSelWeekend ? 'Weekend' : `Day ${selDayNum}`;
+
+      // Build 14-day upcoming strip anchored around today
+      const baseToday = new Date();
+      baseToday.setHours(0, 0, 0, 0);
+      let stripHTML = '';
+      for (let offset = -1; offset <= 13; offset++) {
+        const dObj = new Date(baseToday);
+        dObj.setDate(baseToday.getDate() + offset);
+        const iso = formatDateToISO(dObj);
+        const dowShort = dObj.toLocaleDateString('en-US', { weekday: 'short' });
+        const dNum = dObj.getDate();
+        const isWknd = dObj.getDay() === 0 || dObj.getDay() === 6;
+        const tag = isWknd ? 'WKND' : `D${getDayFromDateObj(dObj)}`;
+        const activeChip = iso === searchSelectedDateISO ? 'active' : '';
+        stripHTML += `
+          <div class="week-day-chip ${activeChip}" onclick="selectSearchDate('${iso}')">
+            <span class="week-chip-dow">${dowShort}</span>
+            <span class="week-chip-num">${dNum}</span>
+            <span class="week-chip-tag">${tag}</span>
+          </div>
+        `;
+      }
+
       container.innerHTML = `
-        <div class="avec-card" style="margin-bottom: 14px; cursor: default;">
-          <label>Search Classes, Tasks & Events</label>
-          <input type="text" id="searchInput" style="margin-bottom: 0;" placeholder="Search by subject, teacher, room, or date..." oninput="filterSearch(this.value)" />
+        <div class="avec-card" style="margin-bottom: 14px; cursor: default; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="margin: 0;">📅 Explore Dates & Schedule</label>
+            ${!isSelToday ? `<button type="button" class="copy-chip-btn" onclick="selectSearchDate('${getTodayISO()}')">Today</button>` : `<span style="font-size: 0.72rem; font-weight: 600; color: var(--accent-blue);">Today</span>`}
+          </div>
+
+          <div class="date-flipper-bar">
+            <button type="button" class="date-nav-btn" onclick="stepSearchDate(-1)" title="Previous Day">‹</button>
+            <div class="date-center-pill" onclick="document.getElementById('hiddenSearchDatePicker').showPicker ? document.getElementById('hiddenSearchDatePicker').showPicker() : document.getElementById('hiddenSearchDatePicker').click()">
+              <div class="date-center-main">${escapeHTML(formattedHeaderDate)}</div>
+              <div class="date-center-sub">${dayBadgeLabel} • Tap to jump to date</div>
+              <input type="date" id="hiddenSearchDatePicker" value="${searchSelectedDateISO}" onchange="selectSearchDate(this.value)" style="position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; margin: 0; cursor: pointer;" />
+            </div>
+            <button type="button" class="date-nav-btn" onclick="stepSearchDate(1)" title="Next Day">›</button>
+          </div>
+
+          <div class="week-strip-scroll" style="margin-bottom: 14px;">
+            ${stripHTML}
+          </div>
+
+          <label>🔍 Search Tasks, Events & Classes</label>
+          <input type="text" id="searchInput" value="${escapeHTML(searchQueryText)}" style="margin-bottom: 0;" placeholder="Type to search tasks, events, teachers, or rooms..." oninput="filterSearch(this.value)" />
         </div>
         <div id="searchResults" class="card-stack"></div>
       `;
-      filterSearch('');
+      filterSearch(searchQueryText);
     }
   }
 
-  // Quick Class Notes & Teacher Details Drawer with TDSB Email & Copy Button
+  function stepSearchDate(deltaDays) {
+    const current = parseISOToLocalDate(searchSelectedDateISO || getTodayISO());
+    current.setDate(current.getDate() + deltaDays);
+    searchSelectedDateISO = formatDateToISO(current);
+    renderApp();
+  }
+
+  function selectSearchDate(isoStr) {
+    if (!isoStr) return;
+    searchSelectedDateISO = isoStr;
+    renderApp();
+  }
+
   function openClassDetailModal(title, teacher, room) {
     const sheet = document.getElementById('sheetContent');
     const noteKey = `${activeUser}_${activeSemester}_${title}`;
@@ -1287,7 +1671,6 @@
     safeSetItem('jupiter_notes', JSON.stringify(classNotes));
   }
 
-  // Streamlined Menu Bar
   function openMenuSheet() {
     const sheet = document.getElementById('sheetContent');
     sheet.innerHTML = `
@@ -1355,57 +1738,145 @@
     sheet.classList.add('open');
   }
 
+  // Redesigned iOS Apple Account Style Profile / Settings Sheet (`CH`)
   function openProfileSheet() {
     const sheet = document.getElementById('sheetContent');
-    let html = `
+    const student = masterSchedules[activeUser] || masterSchedules["christos"];
+
+    sheet.innerHTML = `
       <div class="sheet-header">
-        <h3 class="sheet-title">Profile & Settings</h3>
+        <h3 class="sheet-title">Accounts</h3>
         <button class="close-btn" onclick="closeSheets()">×</button>
       </div>
 
-      <label>Appearance & Semester</label>
-      <div style="display: flex; gap: 8px; margin-bottom: 18px;">
-        <button class="student-pill" style="flex: 1;" onclick="toggleTheme(); openProfileSheet();">
-          ${currentTheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+      <!-- Apple Account Header Card -->
+      <div class="apple-account-header">
+        <div class="apple-account-info">
+          <div class="apple-account-avatar">${student.name.slice(0, 2).toUpperCase()}</div>
+          <div>
+            <div class="apple-account-name">${escapeHTML(student.name)}</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Semester ${activeSemester === 's1' ? '1' : '2'} • Active Profile</div>
+          </div>
+        </div>
+        <div class="apple-account-check">✓</div>
+      </div>
+
+      <!-- Quick Action Pills -->
+      <div class="apple-pill-row">
+        <button class="apple-action-pill" onclick="openAccountPickerModal()">Change account</button>
+        <button class="apple-action-pill" onclick="toggleSemesterFromProfile()">Change semesters</button>
+      </div>
+
+      <!-- Stacked Settings & Data List (Import data directly beneath Export data) -->
+      <div class="apple-settings-list">
+        <button class="apple-settings-item" onclick="openAppearanceSettingsModal()">
+          <div class="apple-settings-left">
+            <span class="apple-settings-icon">⚙️</span>
+            <span>Settings</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-blue); display: inline-block;"></span>
+            <span style="color: var(--text-muted);">›</span>
+          </div>
         </button>
-        <button class="student-pill ${activeSemester === 's1' ? 'active' : ''}" style="flex: 0.6;" onclick="switchSemester('s1')">Sem 1</button>
-        <button class="student-pill ${activeSemester === 's2' ? 'active' : ''}" style="flex: 0.6;" onclick="switchSemester('s2')">Sem 2</button>
+        <button class="apple-settings-item" onclick="exportUserData()">
+          <div class="apple-settings-left">
+            <span class="apple-settings-icon">📤</span>
+            <span>Export data</span>
+          </div>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
+        <button class="apple-settings-item" onclick="document.getElementById('importFile').click()">
+          <div class="apple-settings-left">
+            <span class="apple-settings-icon">📥</span>
+            <span>Import data</span>
+          </div>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
+        <button class="apple-settings-item" onclick="openFeedbackModal()">
+          <div class="apple-settings-left">
+            <span class="apple-settings-icon">💬</span>
+            <span>Send feedback</span>
+          </div>
+          <span style="color: var(--text-muted);">›</span>
+        </button>
       </div>
+      <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importUserData(event)" />
+    `;
+    document.getElementById('sheetOverlay').classList.add('open');
+    sheet.classList.add('open');
+  }
 
-      <label>Schedule View Mode</label>
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 18px;">
-        <button class="student-pill ${dayOverride === 'auto' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('auto')">Auto</button>
-        <button class="student-pill ${dayOverride === '1' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('1')">Day 1</button>
-        <button class="student-pill ${dayOverride === '2' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('2')">Day 2</button>
-        <button class="student-pill ${dayOverride === 'weekend' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('weekend')">Weekend</button>
+  function openAccountPickerModal() {
+    const sheet = document.getElementById('sheetContent');
+    let html = `
+      <div class="sheet-header">
+        <h3 class="sheet-title">Switch Account</h3>
+        <button class="close-btn" onclick="openProfileSheet()">←</button>
       </div>
-
-      <label>Select Your Profile</label>
+      <label>Select Student Profile</label>
       <div class="student-grid" style="margin-bottom: 20px;">
     `;
     for (const key in masterSchedules) {
       const active = activeUser === key ? 'active' : '';
       html += `<div class="student-pill ${active}" onclick="switchProfile('${key}')">${masterSchedules[key].name}</div>`;
     }
-    html += `
+    html += `</div>`;
+    sheet.innerHTML = html;
+  }
+
+  function toggleSemesterFromProfile() {
+    activeSemester = activeSemester === 's1' ? 's2' : 's1';
+    compareSemester = activeSemester;
+    safeSetItem('jupiter_semester', activeSemester);
+    openProfileSheet();
+    renderApp();
+  }
+
+  function openAppearanceSettingsModal() {
+    const sheet = document.getElementById('sheetContent');
+    sheet.innerHTML = `
+      <div class="sheet-header">
+        <h3 class="sheet-title">Settings & Appearance</h3>
+        <button class="close-btn" onclick="openProfileSheet()">←</button>
       </div>
-      <label>Data Backup & Restore</label>
-      <div style="display: flex; gap: 8px;">
-        <button class="student-pill" style="flex: 1;" onclick="exportUserData()">📥 Export Backup</button>
-        <button class="student-pill" style="flex: 1;" onclick="document.getElementById('importFile').click()">📤 Restore Backup</button>
-        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importUserData(event)" />
+      <label>Theme Mode</label>
+      <button class="student-pill" style="width: 100%; margin-bottom: 16px;" onclick="toggleTheme(); openAppearanceSettingsModal();">
+        ${currentTheme === 'dark' ? '🌙 Dark Mode Active' : '☀️ Light Mode Active'}
+      </button>
+
+      <label>Schedule Day Override</label>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px;">
+        <button class="student-pill ${dayOverride === 'auto' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('auto')">Auto</button>
+        <button class="student-pill ${dayOverride === '1' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('1')">Day 1</button>
+        <button class="student-pill ${dayOverride === '2' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('2')">Day 2</button>
+        <button class="student-pill ${dayOverride === 'weekend' ? 'active' : ''}" style="padding: 9px 4px; font-size: 0.8rem;" onclick="setDayOverrideMode('weekend')">Weekend</button>
       </div>
     `;
-    sheet.innerHTML = html;
-    document.getElementById('sheetOverlay').classList.add('open');
-    sheet.classList.add('open');
+  }
+
+  function openFeedbackModal() {
+    const sheet = document.getElementById('sheetContent');
+    sheet.innerHTML = `
+      <div class="sheet-header">
+        <h3 class="sheet-title">Send Feedback</h3>
+        <button class="close-btn" onclick="openProfileSheet()">←</button>
+      </div>
+      <label>Your Feedback or Feature Request</label>
+      <textarea id="feedbackText" placeholder="Tell us what you'd like to improve in Jupiter..."></textarea>
+      <button class="primary-btn" onclick="submitFeedback()">Send Feedback</button>
+    `;
+  }
+
+  function submitFeedback() {
+    closeSheets();
   }
 
   function setDayOverrideMode(mode) {
     previewingMonday = false;
     dayOverride = mode;
     safeSetItem('jupiter_day_override', mode);
-    openProfileSheet();
+    openAppearanceSettingsModal();
     renderApp();
   }
 
@@ -1415,14 +1886,6 @@
     if (!selectedCompareUsers.includes(key)) {
       selectedCompareUsers.unshift(key);
     }
-    closeSheets();
-    renderApp();
-  }
-
-  function switchSemester(sem) {
-    activeSemester = sem;
-    compareSemester = sem;
-    safeSetItem('jupiter_semester', sem);
     openProfileSheet();
     renderApp();
   }
@@ -1546,7 +2009,6 @@
     if (stayInManager) openManageEventsSheet();
   }
 
-  // Compare Schedules: Highlights ONLY friends matching the active user's class
   function openCompareModal() {
     const sheet = document.getElementById('sheetContent');
     const allKeys = Object.keys(masterSchedules);
@@ -1640,41 +2102,141 @@
   }
 
   function filterSearch(query) {
+    searchQueryText = query;
     const resultsContainer = document.getElementById('searchResults');
     if (!resultsContainer) return;
     const q = query.toLowerCase().trim();
+    const student = masterSchedules[activeUser] || masterSchedules["christos"];
+
+    // When search bar is empty, render the complete chronological schedule & calendar events for the selected date
+    if (!q) {
+      const selISO = searchSelectedDateISO || getTodayISO();
+      const selDateObj = parseISOToLocalDate(selISO);
+      const dow = selDateObj.getDay();
+      const isWknd = dow === 0 || dow === 6;
+      const dayNum = getDayFromDateObj(selDateObj);
+      const timeline = buildChronologicalDayTimeline(student, dayNum, selISO, !isWknd);
+
+      let html = '';
+
+      if (isWknd) {
+        html += `
+          <div class="avec-card" style="text-align: center; padding: 24px 20px; cursor: default;">
+            <div style="font-size: 1.5rem; margin-bottom: 6px;">🌤️</div>
+            <div style="font-weight: 700; font-size: 1.02rem;">Weekend — No Regular Classes</div>
+            <div style="font-size: 0.83rem; color: var(--text-muted); margin-top: 3px;">
+              ${timeline.length === 0 ? 'No custom calendar events scheduled for this date.' : 'Showing your scheduled weekend events below.'}
+            </div>
+          </div>
+        `;
+      } else {
+        html += `<div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 4px 0 4px;">Day ${dayNum} Timeline (${activeSemester.toUpperCase()})</div>`;
+      }
+
+      timeline.forEach(item => {
+        if (item.kind === 'event') {
+          const ce = item.eventObj;
+          const repeatTag = ce.date ? `Date: ${ce.date}` : (ce.day === 'all' ? 'Repeats • Every School Day' : `Repeats • Day ${ce.day}`);
+          html += `
+            <div class="avec-card" style="border-color: var(--accent-blue); cursor: default;">
+              <div class="class-header">
+                <div class="class-left">
+                  <div class="emoji-badge">${ce.emoji || '📅'}</div>
+                  <div class="class-title">${escapeHTML(ce.title)}</div>
+                </div>
+                <div class="class-time-wrap">
+                  <span class="class-time">${escapeHTML(ce.time)}</span>
+                </div>
+              </div>
+              <div class="class-details">${escapeHTML(repeatTag)}${ce.location ? ' | ' + escapeHTML(ce.location) : ''}</div>
+            </div>
+          `;
+        } else if (item.kind === 'lunch') {
+          const badge = getSubjectBadge("Lunch");
+          html += `
+            <div class="avec-card" style="cursor: default;">
+              <div class="class-header">
+                <div class="class-left">
+                  <div class="emoji-badge" style="background: ${badge.bg};">${badge.emoji}</div>
+                  <div class="class-title">Lunch</div>
+                </div>
+                <div class="class-time-wrap">
+                  <span class="class-time">${item.ts.time}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (item.kind === 'class') {
+          const classObj = item.classObj;
+          const badge = getSubjectBadge(classObj.title);
+          const classTasks = tasks.filter(t => t.classKey.toLowerCase() === classObj.title.toLowerCase() && !t.completed);
+
+          html += `
+            <div class="avec-card" onclick="openClassDetailModal('${escapeJS(classObj.title)}', '${escapeJS(classObj.teacher)}', '${escapeJS(classObj.room)}')">
+              <div class="class-header">
+                <div class="class-left">
+                  <div class="emoji-badge" style="background: ${badge.bg};">${badge.emoji}</div>
+                  <div class="class-title">${escapeHTML(classObj.title)}</div>
+                </div>
+                <div class="class-time-wrap">
+                  <span class="class-time">${item.ts.time}</span>
+                </div>
+              </div>
+              <div class="class-details">${escapeHTML(classObj.teacher)} | Room ${escapeHTML(classObj.room)}</div>
+              ${classTasks.length > 0 ? `
+                <div class="task-preview-list">
+                  ${classTasks.map(t => `<div class="task-preview-item">${escapeHTML(t.title)}</div>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+      });
+
+      resultsContainer.innerHTML = html;
+      return;
+    }
+
+    // Live cross-date search across all tasks, calendar events, and classes
     const matches = [];
 
     tasks.forEach(t => {
-      if (!q || t.title.toLowerCase().includes(q) || t.classKey.toLowerCase().includes(q)) {
-        matches.push({ type: 'Task', text: t.title, sub: `Class: ${t.classKey}` });
+      if (t.title.toLowerCase().includes(q) || t.classKey.toLowerCase().includes(q)) {
+        matches.push({ type: `Task • ${t.completed ? 'Completed' : 'Pending'}`, text: t.title, sub: `Class: ${t.classKey}` });
       }
     });
 
     customEvents.forEach(ce => {
       const dateText = ce.date || (ce.day === 'all' ? 'Every Day' : `Day ${ce.day}`);
-      if (!q || ce.title.toLowerCase().includes(q) || (ce.location && ce.location.toLowerCase().includes(q)) || dateText.toLowerCase().includes(q)) {
-        matches.push({ type: `Event • ${dateText}`, text: `${ce.emoji || '📅'} ${ce.title}`, sub: `${ce.time}${ce.location ? ' | ' + ce.location : ''}` });
+      if (ce.title.toLowerCase().includes(q) || (ce.location && ce.location.toLowerCase().includes(q)) || dateText.toLowerCase().includes(q)) {
+        matches.push({
+          type: `Calendar Event • ${dateText}`,
+          text: `${ce.emoji || '📅'} ${ce.title}`,
+          sub: `${ce.time}${ce.location ? ' | ' + ce.location : ''}`,
+          jumpDate: ce.date || null
+        });
       }
     });
 
-    const student = masterSchedules[activeUser] || masterSchedules["christos"];
     student.baseSchedule.forEach((bs, idx) => {
       ['s1', 's2'].forEach(sem => {
         const c = bs[sem];
         const email = formatTdsbEmail(c.teacher);
-        if (!q || c.title.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q) || c.room.toLowerCase().includes(q) || email.includes(q)) {
+        if (c.title.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q) || c.room.toLowerCase().includes(q) || email.includes(q)) {
           matches.push({ type: `Period ${idx + 1} (${sem.toUpperCase()})`, text: c.title, sub: `${c.teacher} (${email}) | Room ${c.room}` });
         }
       });
     });
 
     if (matches.length === 0) {
-      resultsContainer.innerHTML = `<div class="avec-card" style="text-align: center; color: var(--text-muted); cursor: default;">No matching classes, tasks, or events.</div>`;
+      resultsContainer.innerHTML = `<div class="avec-card" style="text-align: center; color: var(--text-muted); cursor: default;">No matching tasks, events, or classes found.</div>`;
     } else {
       resultsContainer.innerHTML = matches.map(m => `
-        <div class="avec-card" style="padding: 14px 18px; cursor: default;">
-          <div style="font-size: 0.72rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 3px;">${escapeHTML(m.type)}</div>
+        <div class="avec-card" style="padding: 14px 18px; cursor: ${m.jumpDate ? 'pointer' : 'default'};" ${m.jumpDate ? `onclick="searchQueryText=''; selectSearchDate('${escapeJS(m.jumpDate)}')"` : ''}>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+            <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase;">${escapeHTML(m.type)}</span>
+            ${m.jumpDate ? `<span style="font-size: 0.72rem; font-weight: 600; color: var(--accent-blue);">Jump to date →</span>` : ''}
+          </div>
           <div style="font-weight: 600; font-size: 0.98rem;">${escapeHTML(m.text)}</div>
           <div style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">${escapeHTML(m.sub)}</div>
         </div>
@@ -1718,7 +2280,7 @@
         }
         if (data.classNotes && typeof data.classNotes === 'object') {
           classNotes = data.classNotes;
-          safeSetItem('jupiter_notes', JSON.stringify(classNotes));
+          safeSetItem('jupiter_notes', JSON.stringify(data.classNotes));
         }
         if (data.profile && masterSchedules[data.profile]) {
           activeUser = data.profile;
@@ -1730,10 +2292,7 @@
         }
         closeSheets();
         renderApp();
-      } catch (err) {
-        const sheet = document.getElementById('sheetContent');
-        sheet.innerHTML = `<div class="sheet-header"><h3 class="sheet-title">Restore Error</h3><button class="close-btn" onclick="closeSheets()">×</button></div><p style="color:var(--text-muted);">Invalid Jupiter backup file.</p>`;
-      }
+      } catch (err) {}
     };
     reader.readAsText(file);
   }
